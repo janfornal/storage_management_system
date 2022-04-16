@@ -70,7 +70,8 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE TRIGGER my_trigger  
+--name of trigger is long, but self-explanatory
+CREATE TRIGGER trigger_add_id_product_to_stan_magazynu  
 AFTER INSERT
 ON PRODUKTY
 FOR EACH ROW
