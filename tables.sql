@@ -32,7 +32,7 @@ CREATE TABLE PRODUKTY_SPRZEDAZ (
     id_sprzedazy NUMERIC(10) REFERENCES SPRZEDAZE(id_sprzedazy),
     id_produktu NUMERIC(10) REFERENCES PRODUKTY(id),
     CONSTRAINT ps_key UNIQUE (id_sprzedazy, id_produktu),
-    ilosc NUMERIC(6) CHECK (ilosc >= 0)
+    ilosc NUMERIC(6) CHECK (ilosc > 0)
 );
 
 CREATE TABLE HISTORIA_CEN (
@@ -53,10 +53,27 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE TRIGGER my_trigger
+--trigger below disables putting new record in PRODUKTY_SPRZEDAZ where ilosc > ilosc in 
+--respective record in stan_magazynu, also changes respective ilosc value
+CREATE TRIGGER trigger_ilosc  
 AFTER INSERT
 ON PRODUKTY_SPRZEDAZ
 FOR EACH ROW
 EXECUTE PROCEDURE update_stan_magazynu();
+
+CREATE OR REPLACE FUNCTION insert_id_products_to_stan_magazynu()
+    RETURNS trigger AS
+$$
+BEGIN
+    INSERT INTO STAN_MAGAZYNU (id_produktu, ilosc) VALUES (NEW.id, 0);
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER my_trigger  
+AFTER INSERT
+ON PRODUKTY
+FOR EACH ROW
+EXECUTE PROCEDURE insert_id_products_to_stan_magazynu();
 
 COMMIT;

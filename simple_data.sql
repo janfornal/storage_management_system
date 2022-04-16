@@ -28,16 +28,14 @@ COPY PRODUKTY (id, id_kategoria, nazwa, id_marki) FROM stdin;
 12	8	KD-55X85J	216
 \.
 
-COPY STAN_MAGAZYNU (id_produktu, ilosc) FROM stdin;
-3	40
-4	29
-5	13
-6	27
-9	8
-10	11
-11	9
-12	13
-\.
+UPDATE STAN_MAGAZYNU SET ilosc = 40 WHERE id_produktu = 3;
+UPDATE STAN_MAGAZYNU SET ilosc = 29 WHERE id_produktu = 4;
+UPDATE STAN_MAGAZYNU SET ilosc = 13 WHERE id_produktu = 5;
+UPDATE STAN_MAGAZYNU SET ilosc = 27 WHERE id_produktu = 6;
+UPDATE STAN_MAGAZYNU SET ilosc = 8 WHERE id_produktu = 9;
+UPDATE STAN_MAGAZYNU SET ilosc = 11 WHERE id_produktu = 10;
+UPDATE STAN_MAGAZYNU SET ilosc = 9 WHERE id_produktu = 11;
+UPDATE STAN_MAGAZYNU SET ilosc = 13 WHERE id_produktu = 12;
 
 COPY SPRZEDAZE (id_sprzedazy, data) FROM stdin;
 10	2014-07-25 07:42:02.368
