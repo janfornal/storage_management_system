@@ -27,7 +27,7 @@ CREATE TABLE KATEGORIE (
 CREATE TABLE PARAMETRY (
 );
 
-CREATE TABLE PRODUKTY (   
+CREATE TABLE PRODUKTY (
     id NUMERIC(10) PRIMARY KEY,
     id_kategoria NUMERIC(6),   --some reference here
     nazwa VARCHAR(20),
@@ -66,7 +66,7 @@ CREATE TABLE PRODUKTY_DOSTAWY (
     id_dostawy NUMERIC(10) REFERENCES DOSTAWY(id_dostawy),
     id_produktu NUMERIC(10) REFERENCES PRODUKTY(id),
     CONSTRAINT pd_key UNIQUE (id_dostawy, id_produktu),
-    ilosc NUMERIC(6) CHECK (ilosc >= 0)
+    ilosc NUMERIC(6) CHECK (ilosc > 0)
 );
 
 CREATE TABLE SPRZEDAZE (
@@ -83,15 +83,35 @@ CREATE TABLE PRODUKTY_SPRZEDAZ (
 
 CREATE TABLE ZWROTY_KLIENTOW (
     id_zwrotu NUMERIC(10) PRIMARY KEY,
-    id_produktu NUMERIC(10) REFERENCES PRODUKTY(id),
     id_sprzedazy NUMERIC(10) REFERENCES SPRZEDAZE(id_sprzedazy),
+    id_produktu NUMERIC(10) REFERENCES PRODUKTY(id),
     ilosc NUMERIC(6) CHECK (ilosc > 0),
     data DATE
 );
 
 ---------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION update_stan_magazynu()
+CREATE OR REPLACE FUNCTION zwroty_ilosc_check(NUMERIC, NUMERIC)
+    RETURNS NUMERIC(10) AS
+$$
+BEGIN
+    RETURN (
+        SELECT COALESCE(SUM(ilosc), 0)
+        FROM PRODUKTY_SPRZEDAZ
+        WHERE id_sprzedazy = $1 AND id_produktu = $2
+    )-(
+        SELECT COALESCE(SUM(ilosc), 0)
+        FROM ZWROTY_KLIENTOW
+        WHERE id_sprzedazy = $1 AND id_produktu = $2
+    );
+END;
+$$ LANGUAGE 'plpgsql';
+
+--additional constraint to control zwroty ilosc
+ALTER TABLE ZWROTY_KLIENTOW
+ADD CONSTRAINT zwroty_check CHECK(zwroty_ilosc_check(id_sprzedazy, id_produktu) >= 0);
+
+CREATE OR REPLACE FUNCTION update_decrease_stan_magazynu()
     RETURNS trigger AS
 $$
 BEGIN
@@ -102,13 +122,31 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION update_increase_stan_magazynu()
+    RETURNS trigger AS
+$$
+BEGIN
+    UPDATE STAN_MAGAZYNU
+    SET ilosc = ilosc + NEW.ilosc
+    WHERE id_produktu = NEW.id_produktu;
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
 --trigger below disables putting new record in PRODUKTY_SPRZEDAZ where ilosc > ilosc in 
 --respective record in stan_magazynu, also changes respective ilosc value
-CREATE TRIGGER trigger_ilosc  
+CREATE TRIGGER trigger_ilosc_ps  
 AFTER INSERT
 ON PRODUKTY_SPRZEDAZ
 FOR EACH ROW
-EXECUTE PROCEDURE update_stan_magazynu();
+EXECUTE PROCEDURE update_decrease_stan_magazynu();
+
+--updates record in stan_magazynu, after inserting into PRODUKTY_DOSTAWY
+CREATE TRIGGER trigger_ilosc_pd  
+AFTER INSERT
+ON PRODUKTY_DOSTAWY
+FOR EACH ROW
+EXECUTE PROCEDURE update_increase_stan_magazynu();
 
 CREATE OR REPLACE FUNCTION insert_id_products_to_stan_magazynu()
     RETURNS trigger AS
