@@ -47,6 +47,8 @@ CREATE TABLE HISTORIA_CEN (
 );
 
 CREATE TABLE DOSTAWCY (
+    id_dostawcy NUMERIC(10) PRIMARY KEY,
+    nazwa VARCHAR(20)
 );
 
 CREATE TABLE STAN_MAGAZYNU (
@@ -55,13 +57,20 @@ CREATE TABLE STAN_MAGAZYNU (
 );
 
 CREATE TABLE DOSTAWY (
+    id_dostawy NUMERIC(10) PRIMARY KEY,
+    id_dostawcy NUMERIC(10) REFERENCES DOSTAWCY(id_dostawcy),
+    data_dostawy DATE
 );
 
 CREATE TABLE PRODUKTY_DOSTAWY (
+    id_dostawy NUMERIC(10) REFERENCES DOSTAWY(id_dostawy),
+    id_produktu NUMERIC(10) REFERENCES PRODUKTY(id),
+    CONSTRAINT pd_key UNIQUE (id_dostawy, id_produktu),
+    ilosc NUMERIC(6) CHECK (ilosc >= 0)
 );
 
 CREATE TABLE SPRZEDAZE (
-    id_sprzedazy NUMERIC(10) PRIMARY KEY, --check if types agree
+    id_sprzedazy NUMERIC(10) PRIMARY KEY,
     data DATE
 );
 
@@ -73,10 +82,14 @@ CREATE TABLE PRODUKTY_SPRZEDAZ (
 );
 
 CREATE TABLE ZWROTY_KLIENTOW (
+    id_zwrotu NUMERIC(10) PRIMARY KEY,
+    id_produktu NUMERIC(10) REFERENCES PRODUKTY(id),
+    id_sprzedazy NUMERIC(10) REFERENCES SPRZEDAZE(id_sprzedazy),
+    ilosc NUMERIC(6) CHECK (ilosc > 0),
+    data DATE
 );
 
 ---------------------------------------------------------------
-
 
 CREATE OR REPLACE FUNCTION update_stan_magazynu()
     RETURNS trigger AS
@@ -114,3 +127,4 @@ FOR EACH ROW
 EXECUTE PROCEDURE insert_id_products_to_stan_magazynu();
 
 COMMIT;
+
