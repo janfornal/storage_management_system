@@ -11,6 +11,11 @@ COPY MARKA (id, nazwa) FROM stdin;
 214	Samsung
 215	Philips
 216	Sony
+217	Whirlpool
+218	Indesit
+219	Haier
+220	ASUS
+221	Logitech
 \.
 
 COPY PRODUKTY (id, id_kategoria, nazwa, id_marki) FROM stdin;
@@ -26,6 +31,10 @@ COPY PRODUKTY (id, id_kategoria, nazwa, id_marki) FROM stdin;
 10	8	XR-55A90J	216
 11	8	XR-85Z9JAEP	216
 12	8	KD-55X85J	216
+13	9	HW80-B14959U1-S	219
+14	9	HTF-610DSN7	219
+15	9	HWD120-B14979	219
+16	9	HRC-45D2H	219
 \.
 
 UPDATE STAN_MAGAZYNU SET ilosc = 40 WHERE id_produktu = 3;
