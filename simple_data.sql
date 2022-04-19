@@ -92,4 +92,28 @@ COPY HISTORIA_CEN (id_produktu, data_wprowadzenia, cena_netto) FROM stdin;
 12	2015-12-16 10:13:01	2399.99
 \.
 
+COPY DOSTAWCY (id_dostawcy, nazwa) FROM stdin;
+100	LG
+101	Samsung
+102	Philips
+\.
+
+COPY DOSTAWY (id_dostawy, id_dostawcy, data_dostawy) FROM stdin;
+200	100	2015-11-15 10:15:00
+201	100	2015-08-02 09:00:00
+202	101	2015-03-25 06:00:00
+\.
+
+COPY PRODUKTY_DOSTAWY (id_dostawy, id_produktu, ilosc) FROM stdin;
+200	10	5
+200	11	7
+201	9	50
+\.
+
+COPY ZWROTY_KLIENTOW (id_zwrotu, id_sprzedazy, id_produktu, ilosc, data) FROM stdin;
+1	20	3	3	2014-01-26 22:00:00
+2	20	4	3	2014-01-26 22:00:00
+3	20	3	1	2014-01-26 23:00:00
+\.
+
 COMMIT;
