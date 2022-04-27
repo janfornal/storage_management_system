@@ -35,9 +35,9 @@ CREATE TABLE PARAMETERS (
 
 CREATE TABLE PRODUCTS (
     id NUMERIC(10) PRIMARY KEY,
-    id_category NUMERIC(10) REFERENCES CATEGORIES(id_category),
+    id_category NUMERIC(10) NOT NULL REFERENCES CATEGORIES(id_category),
     name VARCHAR(100) NOT NULL,
-    id_brand NUMERIC(10) REFERENCES BRAND(id_brand)
+    id_brand NUMERIC(10) NOT NULL REFERENCES BRAND(id_brand)
 );
 
 CREATE TABLE REQUIRED_PARAMETERS (
@@ -53,8 +53,8 @@ CREATE TABLE PARAMETER_PRODUCTS (
 
 CREATE TABLE PRICE_HISTORY (
     id_product NUMERIC(10) REFERENCES PRODUCTS(id), --check if types agree
-    launch_date DATE,
-    net_price NUMERIC(8,2)
+    launch_date DATE NOT NULL ,
+    net_price NUMERIC(8,2) NOT NULL 
 );
 
 CREATE TABLE SUPPLIERS (
@@ -63,41 +63,41 @@ CREATE TABLE SUPPLIERS (
 );
 
 CREATE TABLE STORE_STATUS (
-    id_product NUMERIC(10) REFERENCES PRODUCTS(id) UNIQUE, --check if types agree
-    quantity NUMERIC(10) CHECK (quantity >= 0)
+    id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id) UNIQUE, --check if types agree
+    quantity NUMERIC(10) NOT NULL CHECK (quantity >= 0)
 );
 
 CREATE TABLE DELIVERIES (
     id_delivery NUMERIC(10) PRIMARY KEY,
-    id_supplier NUMERIC(10) REFERENCES SUPPLIERS(id_supplier),
-    date_delivery DATE
+    id_supplier NUMERIC(10) NOT NULL REFERENCES SUPPLIERS(id_supplier),
+    date_delivery DATE NOT NULL 
 );
 
 CREATE TABLE PRODUCTS_DELIVERIES (
-    id_delivery NUMERIC(10) REFERENCES DELIVERIES(id_delivery),
-    id_product NUMERIC(10) REFERENCES PRODUCTS(id),
+    id_delivery NUMERIC(10) NOT NULL REFERENCES DELIVERIES(id_delivery),
+    id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id),
     CONSTRAINT pd_key UNIQUE (id_delivery, id_product),
-    quantity NUMERIC(10) CHECK (quantity > 0)
+    quantity NUMERIC(10) NOT NULL CHECK (quantity > 0)
 );
 
 CREATE TABLE SALES (
     id_sale NUMERIC(10) PRIMARY KEY,
-    "date" DATE
+    "date" DATE NOT NULL 
 );
 
 CREATE TABLE PRODUCTS_SOLD (
-    id_sale NUMERIC(10) REFERENCES SALES(id_sale),
-    id_product NUMERIC(10) REFERENCES PRODUCTS(id),
+    id_sale NUMERIC(10) NOT NULL REFERENCES SALES(id_sale),
+    id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id),
     CONSTRAINT ps_key UNIQUE (id_sale, id_product),
-    quantity NUMERIC(10) CHECK (quantity > 0)
+    quantity NUMERIC(10) NOT NULL CHECK (quantity > 0)
 );
 
 CREATE TABLE CLIENTS_RETURN (
     id_return NUMERIC(10) PRIMARY KEY,
-    id_sale NUMERIC(10) REFERENCES SALES(id_sale),
-    id_product NUMERIC(10) REFERENCES PRODUCTS(id),
-    quantity NUMERIC(10) CHECK (quantity > 0),
-    "date" DATE
+    id_sale NUMERIC(10) NOT NULL REFERENCES SALES(id_sale),
+    id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id),
+    quantity NUMERIC(10) NOT NULL CHECK (quantity > 0),
+    "date" DATE NOT NULL
 );
 
 ---------------------------------------------------------------

@@ -119,7 +119,7 @@ COPY PRODUCTS_DELIVERIES (id_delivery, id_product, quantity) FROM stdin;
 \.
 
 COPY CLIENTS_RETURN (id_return, id_sale, id_product, quantity, date) FROM stdin;
-1	20	3	3	2014-01-26 22:00:00
+1	20	3	30	2014-01-26 22:00:00
 2	20	4	3	2014-01-26 22:00:00
 3	20	3	1	2014-01-26 23:00:00
 \.
