@@ -1,5 +1,5 @@
-begin;
-COPY MARKA (id, nazwa) FROM stdin;
+BEGIN;
+COPY BRAND (id_brand, name) FROM stdin;
 206	Lenovo
 207	Intel
 208	Dell
@@ -18,7 +18,15 @@ COPY MARKA (id, nazwa) FROM stdin;
 221	Logitech
 \.
 
-COPY PRODUKTY (id, id_kategoria, nazwa, id_marki) FROM stdin;
+COPY CATEGORIES (id_category, name, vat) FROM stdin;
+4	"Laptops"	23
+5	"UNKNOWN"	0
+6	"Phones"	23
+8	"TVs"	23
+9	"Household appliances"	23
+\.
+
+COPY PRODUCTS (id, id_category, name, id_brand) FROM stdin;
 1	4	Ideapad 330	206
 2	4	XPS15	207
 3	5	ABC	209
@@ -37,16 +45,16 @@ COPY PRODUKTY (id, id_kategoria, nazwa, id_marki) FROM stdin;
 16	9	HRC-45D2H	219
 \.
 
-UPDATE STAN_MAGAZYNU SET ilosc = 40 WHERE id_produktu = 3;
-UPDATE STAN_MAGAZYNU SET ilosc = 29 WHERE id_produktu = 4;
-UPDATE STAN_MAGAZYNU SET ilosc = 13 WHERE id_produktu = 5;
-UPDATE STAN_MAGAZYNU SET ilosc = 27 WHERE id_produktu = 6;
-UPDATE STAN_MAGAZYNU SET ilosc = 8 WHERE id_produktu = 9;
-UPDATE STAN_MAGAZYNU SET ilosc = 11 WHERE id_produktu = 10;
-UPDATE STAN_MAGAZYNU SET ilosc = 9 WHERE id_produktu = 11;
-UPDATE STAN_MAGAZYNU SET ilosc = 13 WHERE id_produktu = 12;
+UPDATE STORE_STATUS SET quantity = 40 WHERE id_product = 3;
+UPDATE STORE_STATUS SET quantity = 29 WHERE id_product = 4;
+UPDATE STORE_STATUS SET quantity = 13 WHERE id_product = 5;
+UPDATE STORE_STATUS SET quantity = 27 WHERE id_product = 6;
+UPDATE STORE_STATUS SET quantity = 8 WHERE id_product = 9;
+UPDATE STORE_STATUS SET quantity = 11 WHERE id_product = 10;
+UPDATE STORE_STATUS SET quantity = 9 WHERE id_product = 11;
+UPDATE STORE_STATUS SET quantity = 13 WHERE id_product = 12;
 
-COPY SPRZEDAZE (id_sprzedazy, data) FROM stdin;
+COPY SALES (id_sale, date) FROM stdin;
 10	2014-07-25 07:42:02.368
 20	2014-01-26 21:53:23.456
 30	2014-10-21 22:59:42.848
@@ -59,13 +67,13 @@ COPY SPRZEDAZE (id_sprzedazy, data) FROM stdin;
 100	2014-08-30 01:23:58.72
 \.
 
-COPY PRODUKTY_SPRZEDAZ (id_sprzedazy, id_produktu, ilosc) FROM stdin;
+COPY PRODUCTS_SOLD (id_sale, id_product, quantity) FROM stdin;
 20	3	7
 20	4	20
 70	10	3
 \.
 
-COPY HISTORIA_CEN (id_produktu, data_wprowadzenia, cena_netto) FROM stdin;
+COPY PRICE_HISTORY (id_product, launch_date, net_price) FROM stdin;
 1	2015-02-01 12:51:01	2399.99
 1	2015-04-16 06:39:56	2449.99
 1	2015-05-03 13:53:21	2499.99
@@ -92,25 +100,25 @@ COPY HISTORIA_CEN (id_produktu, data_wprowadzenia, cena_netto) FROM stdin;
 12	2015-12-16 10:13:01	2399.99
 \.
 
-COPY DOSTAWCY (id_dostawcy, nazwa) FROM stdin;
+COPY SUPPLIERS (id_supplier, name) FROM stdin;
 100	LG
 101	Samsung
 102	Philips
 \.
 
-COPY DOSTAWY (id_dostawy, id_dostawcy, data_dostawy) FROM stdin;
+COPY DELIVERIES (id_delivery, id_supplier, date_delivery) FROM stdin;
 200	100	2015-11-15 10:15:00
 201	100	2015-08-02 09:00:00
 202	101	2015-03-25 06:00:00
 \.
 
-COPY PRODUKTY_DOSTAWY (id_dostawy, id_produktu, ilosc) FROM stdin;
+COPY PRODUCTS_DELIVERIES (id_delivery, id_product, quantity) FROM stdin;
 200	10	5
 200	11	7
 201	9	50
 \.
 
-COPY ZWROTY_KLIENTOW (id_zwrotu, id_sprzedazy, id_produktu, ilosc, data) FROM stdin;
+COPY CLIENTS_RETURN (id_return, id_sale, id_product, quantity, date) FROM stdin;
 1	20	3	3	2014-01-26 22:00:00
 2	20	4	3	2014-01-26 22:00:00
 3	20	3	1	2014-01-26 23:00:00
