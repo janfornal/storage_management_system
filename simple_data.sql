@@ -18,11 +18,16 @@ COPY BRAND (id_brand, name) FROM stdin;
 221	Logitech
 \.
 
+COPY PARAMETERS (id_parameter, name, unit) FROM stdin;
+1	RAM	GB
+2	"CPU threads"	\N
+\.
+
 COPY CATEGORIES (id_category, name, vat) FROM stdin;
-4	"Laptops"	23
-5	"UNKNOWN"	0
-6	"Phones"	23
-8	"TVs"	23
+4	Laptops	23
+5	UNKNOWN	0
+6	Phones	23
+8	TVs	23
 9	"Household appliances"	23
 \.
 
@@ -43,6 +48,18 @@ COPY PRODUCTS (id, id_category, name, id_brand) FROM stdin;
 14	9	HTF-610DSN7	219
 15	9	HWD120-B14979	219
 16	9	HRC-45D2H	219
+\.
+
+COPY POSSIBLE_PARAMETERS (id_category, id_parameter) FROM stdin;
+4	1
+4	2
+\.
+
+COPY PARAMETER_PRODUCTS (id_parameter, id_product, quantity) FROM stdin;
+1	1	1
+2	1	2
+1	2	8
+2	2	6
 \.
 
 UPDATE STORE_STATUS SET quantity = 40 WHERE id_product = 3;
@@ -119,9 +136,9 @@ COPY PRODUCTS_DELIVERIES (id_delivery, id_product, quantity) FROM stdin;
 \.
 
 COPY CLIENTS_RETURN (id_return, id_sale, id_product, quantity, date) FROM stdin;
-1	20	3	30	2014-01-26 22:00:00
-2	20	4	3	2014-01-26 22:00:00
-3	20	3	1	2014-01-26 23:00:00
+1	20	3	3	2015-01-26 22:00:00
+2	20	4	3	2015-01-26 22:00:00
+3	20	3	4	2015-01-26 23:00:00
 \.
 
 COMMIT;

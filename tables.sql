@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS STORE_STATUS        CASCADE; --delete before PRODUKTY
 DROP TABLE IF EXISTS SUPPLIERS           CASCADE;
 DROP TABLE IF EXISTS PRICE_HISTORY       CASCADE; --delete before PRODUKTY
 DROP TABLE IF EXISTS PARAMETER_PRODUCTS  CASCADE;
-DROP TABLE IF EXISTS REQUIRED_PARAMETERS CASCADE;
+DROP TABLE IF EXISTS POSSIBLE_PARAMETERS CASCADE;
 DROP TABLE IF EXISTS PRODUCTS            CASCADE; --(COMMENT) 
 DROP TABLE IF EXISTS PARAMETERS          CASCADE;
 DROP TABLE IF EXISTS CATEGORIES          CASCADE;
@@ -24,31 +24,33 @@ CREATE TABLE BRAND (
 CREATE TABLE CATEGORIES (
     id_category NUMERIC(10) PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    vat NUMERIC(10) NOT NULL
+    vat NUMERIC(10) NOT NULL CHECK (vat >= 0)
 );
 
 CREATE TABLE PARAMETERS (
     id_parameter NUMERIC(10) PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE,
-    unit VARCHAR(100) NOT NULL
+    unit VARCHAR(100) -- unit can be NULL
 );
 
 CREATE TABLE PRODUCTS (
     id NUMERIC(10) PRIMARY KEY,
     id_category NUMERIC(10) NOT NULL REFERENCES CATEGORIES(id_category),
     name VARCHAR(100) NOT NULL,
-    id_brand NUMERIC(10) NOT NULL REFERENCES BRAND(id_brand)
+    id_brand NUMERIC(10) NOT NULL REFERENCES BRAND(id_brand) 
 );
 
-CREATE TABLE REQUIRED_PARAMETERS (
+CREATE TABLE POSSIBLE_PARAMETERS (
     id_category NUMERIC(10) NOT NULL REFERENCES CATEGORIES(id_category),
-    id_parameter NUMERIC(10) NOT NULL REFERENCES PARAMETERS(id_parameter)
+    id_parameter NUMERIC(10) NOT NULL REFERENCES PARAMETERS(id_parameter),
+    CONSTRAINT poss_param_key UNIQUE (id_category, id_parameter)
 );
 
 CREATE TABLE PARAMETER_PRODUCTS (
-    id_parameter NUMERIC(10) NOT NULL,
+    id_parameter NUMERIC(10) NOT NULL REFERENCES PARAMETERS(id_parameter),
     id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id),
-    quantity NUMERIC(10) NOT NULL
+    quantity NUMERIC(10) NOT NULL, -- this should be VARCHAR ?
+    CONSTRAINT param_pr_key UNIQUE (id_parameter, id_product)
 );
 
 CREATE TABLE PRICE_HISTORY (
@@ -96,31 +98,72 @@ CREATE TABLE CLIENTS_RETURN (
     id_return NUMERIC(10) PRIMARY KEY,
     id_sale NUMERIC(10) NOT NULL REFERENCES SALES(id_sale),
     id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id),
-    quantity NUMERIC(10) NOT NULL CHECK (quantity > 0),
-    "date" DATE NOT NULL
+    quantity NUMERIC(10) NOT NULL CHECK (quantity > 0), 
+    "date" DATE NOT NULL -- additional checks via trigger
 );
 
 ---------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION returned_amount_check(NUMERIC, NUMERIC)
-    RETURNS NUMERIC(10) AS
+CREATE OR REPLACE FUNCTION returned_check()
+    RETURNS trigger AS
 $$
 BEGIN
-    RETURN (
-        SELECT COALESCE(SUM(quantity), 0)
+    IF (
+        SELECT SUM(quantity)
         FROM PRODUCTS_SOLD
-        WHERE id_sale = $1 AND id_product = $2
+        WHERE id_sale = NEW.id_sale AND id_product = NEW.id_product
     )-(
-        SELECT COALESCE(SUM(quantity), 0)
+        SELECT SUM(quantity)
         FROM CLIENTS_RETURN
-        WHERE id_sale = $1 AND id_product = $2
-    );
+        WHERE id_sale = NEW.id_sale AND id_product = NEW.id_product
+    ) < 0 THEN
+        RAISE EXCEPTION 'returned too many products';
+    END IF;
+
+    IF (
+        SELECT date 
+        FROM SALES
+        WHERE id_sale = NEW.id_sale
+    ) > NEW.date THEN 
+        RAISE EXCEPTION 'returned before sale';
+    END IF;
+
+    RETURN NEW;
 END;
 $$ LANGUAGE 'plpgsql';
 
---additional constraint to control zwroty ilosc
-ALTER TABLE CLIENTS_RETURN
-ADD CONSTRAINT return_check CHECK(returned_amount_check(id_sale, id_product) >= 0);
+CREATE TRIGGER trigger_returned_check
+AFTER INSERT
+ON CLIENTS_RETURN
+FOR EACH ROW
+EXECUTE PROCEDURE returned_check();
+
+---------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION allowed_param_check()
+    RETURNS trigger AS
+$$
+BEGIN
+    IF (
+        SELECT COUNT(*)
+        FROM POSSIBLE_PARAMETERS
+        JOIN PRODUCTS 
+        ON PRODUCTS.id = NEW.id_product AND POSSIBLE_PARAMETERS.id_category = PRODUCTS.id_category
+    ) = 0 THEN
+        RAISE EXCEPTION 'this parameter is not allowed';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER trigger_returned_check
+AFTER INSERT
+ON PARAMETER_PRODUCTS
+FOR EACH ROW
+EXECUTE PROCEDURE allowed_param_check();
+
+---------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION update_decrease_store_status()
     RETURNS trigger AS
@@ -158,6 +201,8 @@ AFTER INSERT
 ON PRODUCTS_DELIVERIES
 FOR EACH ROW
 EXECUTE PROCEDURE update_increase_store_status();
+
+---------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION insert_id_products_to_store_status()
     RETURNS trigger AS
