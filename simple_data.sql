@@ -71,7 +71,7 @@ UPDATE STORE_STATUS SET quantity = 11 WHERE id_product = 10;
 UPDATE STORE_STATUS SET quantity = 9 WHERE id_product = 11;
 UPDATE STORE_STATUS SET quantity = 13 WHERE id_product = 12;
 
-COPY SALES (id_sale, date) FROM stdin;
+COPY SALES (id_sale, sales_date) FROM stdin;
 10	2014-07-25 07:42:02.368
 20	2014-01-26 21:53:23.456
 30	2014-10-21 22:59:42.848
@@ -135,7 +135,7 @@ COPY PRODUCTS_DELIVERIES (id_delivery, id_product, quantity) FROM stdin;
 201	9	50
 \.
 
-COPY CLIENTS_RETURN (id_return, id_sale, id_product, quantity, date) FROM stdin;
+COPY CLIENTS_RETURN (id_return, id_sale, id_product, quantity, return_date) FROM stdin;
 1	20	3	3	2015-01-26 22:00:00
 2	20	4	3	2015-01-26 22:00:00
 3	20	3	4	2015-01-26 23:00:00

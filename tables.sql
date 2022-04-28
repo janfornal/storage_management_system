@@ -1,18 +1,18 @@
 BEGIN;
 DROP TABLE IF EXISTS CLIENTS_RETURN      CASCADE;
-DROP TABLE IF EXISTS PRODUCTS_SOLD       CASCADE; --delete before PRODUKTY (COMMENT)
-DROP TABLE IF EXISTS SALES               CASCADE; --delete after PRODUKTY_SPRZEDAZ
+DROP TABLE IF EXISTS PRODUCTS_SOLD       CASCADE;
+DROP TABLE IF EXISTS SALES               CASCADE;
 DROP TABLE IF EXISTS PRODUCTS_DELIVERIES CASCADE;
 DROP TABLE IF EXISTS DELIVERIES          CASCADE;
-DROP TABLE IF EXISTS STORE_STATUS        CASCADE; --delete before PRODUKTY
+DROP TABLE IF EXISTS STORE_STATUS        CASCADE;
 DROP TABLE IF EXISTS SUPPLIERS           CASCADE;
-DROP TABLE IF EXISTS PRICE_HISTORY       CASCADE; --delete before PRODUKTY
+DROP TABLE IF EXISTS PRICE_HISTORY       CASCADE;
 DROP TABLE IF EXISTS PARAMETER_PRODUCTS  CASCADE;
 DROP TABLE IF EXISTS POSSIBLE_PARAMETERS CASCADE;
-DROP TABLE IF EXISTS PRODUCTS            CASCADE; --(COMMENT) 
+DROP TABLE IF EXISTS PRODUCTS            CASCADE;
 DROP TABLE IF EXISTS PARAMETERS          CASCADE;
 DROP TABLE IF EXISTS CATEGORIES          CASCADE;
-DROP TABLE IF EXISTS BRAND               CASCADE; --delete after PRODUKTY
+DROP TABLE IF EXISTS BRAND               CASCADE;
 
 ---------------------------------------------------------------
 
@@ -50,12 +50,13 @@ CREATE TABLE PARAMETER_PRODUCTS (
     id_parameter NUMERIC(10) NOT NULL REFERENCES PARAMETERS(id_parameter),
     id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id),
     quantity NUMERIC(10) NOT NULL, -- this should be VARCHAR ?
-    CONSTRAINT param_pr_key UNIQUE (id_parameter, id_product)
+    CONSTRAINT param_pr_key UNIQUE (id_parameter, id_product) -- additional checks via trigger
 );
 
 CREATE TABLE PRICE_HISTORY (
-    id_product NUMERIC(10) REFERENCES PRODUCTS(id), --check if types agree
-    launch_date DATE NOT NULL ,
+    id_product NUMERIC(10) REFERENCES PRODUCTS(id),
+    launch_date DATE NOT NULL,
+    CONSTRAINT ph_key UNIQUE (id_product, launch_date),
     net_price NUMERIC(8,2) NOT NULL 
 );
 
@@ -65,7 +66,7 @@ CREATE TABLE SUPPLIERS (
 );
 
 CREATE TABLE STORE_STATUS (
-    id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id) UNIQUE, --check if types agree
+    id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id) UNIQUE,
     quantity NUMERIC(10) NOT NULL CHECK (quantity >= 0)
 );
 
@@ -84,7 +85,7 @@ CREATE TABLE PRODUCTS_DELIVERIES (
 
 CREATE TABLE SALES (
     id_sale NUMERIC(10) PRIMARY KEY,
-    "date" DATE NOT NULL 
+    sales_date DATE NOT NULL 
 );
 
 CREATE TABLE PRODUCTS_SOLD (
@@ -99,7 +100,7 @@ CREATE TABLE CLIENTS_RETURN (
     id_sale NUMERIC(10) NOT NULL REFERENCES SALES(id_sale),
     id_product NUMERIC(10) NOT NULL REFERENCES PRODUCTS(id),
     quantity NUMERIC(10) NOT NULL CHECK (quantity > 0), 
-    "date" DATE NOT NULL -- additional checks via trigger
+    return_date DATE NOT NULL -- additional checks via trigger
 );
 
 ---------------------------------------------------------------
@@ -121,10 +122,10 @@ BEGIN
     END IF;
 
     IF (
-        SELECT date 
+        SELECT sales_date 
         FROM SALES
         WHERE id_sale = NEW.id_sale
-    ) > NEW.date THEN 
+    ) > NEW.return_date THEN 
         RAISE EXCEPTION 'returned before sale';
     END IF;
 
