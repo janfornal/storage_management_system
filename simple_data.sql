@@ -63,11 +63,7 @@ COPY PRODUCTS (id, id_category, name, id_brand) FROM stdin;
 COPY POSSIBLE_PARAMETERS (id_category, id_parameter) FROM stdin;
 4	1
 4	2
-21	3
-20	3
-19	3
-18	3
-17	3
+9	3
 \.
 
 COPY PARAMETER_PRODUCTS (id_parameter, id_product, quantity) FROM stdin;
@@ -75,11 +71,11 @@ COPY PARAMETER_PRODUCTS (id_parameter, id_product, quantity) FROM stdin;
 2	1	2
 1	2	8
 2	2	6
-21	3	1
-20	3	12
-19	3	2137
-18	3	2
-17	3	16
+3	20	1
+3	21	12
+3	19	2137
+3	18	2
+3	21	16
 \.
 
 UPDATE STORE_STATUS SET quantity = 40 WHERE id_product = 3;
