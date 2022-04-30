@@ -75,7 +75,6 @@ COPY PARAMETER_PRODUCTS (id_parameter, id_product, quantity) FROM stdin;
 3	21	12
 3	19	2137
 3	18	2
-3	21	16
 \.
 
 UPDATE STORE_STATUS SET quantity = 40 WHERE id_product = 3;
