@@ -16,11 +16,16 @@ COPY BRAND (id_brand, name) FROM stdin;
 219	Haier
 220	ASUS
 221	Logitech
+222	Electrolux
+223	Bosch
+224	Amica
+225	Siemens
 \.
 
 COPY PARAMETERS (id_parameter, name, unit) FROM stdin;
 1	RAM	GB
 2	"CPU threads"	\N
+3	Water_Usage	l
 \.
 
 COPY CATEGORIES (id_category, name, vat) FROM stdin;
@@ -48,11 +53,21 @@ COPY PRODUCTS (id, id_category, name, id_brand) FROM stdin;
 14	9	HTF-610DSN7	219
 15	9	HWD120-B14979	219
 16	9	HRC-45D2H	219
+17	9	SN63EX14AE	225
+18	9	SN53ES14VE	225
+19	9	SR55ZS11ME	225
+20	9	DFM61E6qSEU	224
+21	9	DFM61E6qWEU	224
 \.
 
 COPY POSSIBLE_PARAMETERS (id_category, id_parameter) FROM stdin;
 4	1
 4	2
+21	3
+20	3
+19	3
+18	3
+17	3
 \.
 
 COPY PARAMETER_PRODUCTS (id_parameter, id_product, quantity) FROM stdin;
@@ -60,6 +75,11 @@ COPY PARAMETER_PRODUCTS (id_parameter, id_product, quantity) FROM stdin;
 2	1	2
 1	2	8
 2	2	6
+21	3	1
+20	3	12
+19	3	2137
+18	3	2
+17	3	16
 \.
 
 UPDATE STORE_STATUS SET quantity = 40 WHERE id_product = 3;
@@ -70,6 +90,7 @@ UPDATE STORE_STATUS SET quantity = 8 WHERE id_product = 9;
 UPDATE STORE_STATUS SET quantity = 11 WHERE id_product = 10;
 UPDATE STORE_STATUS SET quantity = 9 WHERE id_product = 11;
 UPDATE STORE_STATUS SET quantity = 13 WHERE id_product = 12;
+UPDATE STORE_STATUS SET quantity = 1 WHERE id_product = 20;
 
 COPY SALES (id_sale, sales_date) FROM stdin;
 10	2014-07-25 07:42:02.368
@@ -82,12 +103,14 @@ COPY SALES (id_sale, sales_date) FROM stdin;
 80	2014-03-24 23:27:04.704
 90	2014-11-08 02:24:28.16
 100	2014-08-30 01:23:58.72
+110	2020-01-01 21:37:00.00
 \.
 
 COPY PRODUCTS_SOLD (id_sale, id_product, quantity) FROM stdin;
 20	3	7
 20	4	20
 70	10	3
+110	20	1
 \.
 
 COPY PRICE_HISTORY (id_product, launch_date, net_price) FROM stdin;
@@ -115,24 +138,34 @@ COPY PRICE_HISTORY (id_product, launch_date, net_price) FROM stdin;
 12	2015-04-24 00:28:17	2099.99
 12	2015-06-20 01:20:36	2099.99
 12	2015-12-16 10:13:01	2399.99
+17	2020-01-01 01:00:00	999.99
+18	2020-01-01 01:00:00	999.99
+19	2020-01-01 01:00:00	999.99
+20	2020-01-01 01:00:00	999.99
+21	2020-01-01 01:00:00	999.99
 \.
 
 COPY SUPPLIERS (id_supplier, name) FROM stdin;
 100	LG
 101	Samsung
 102	Philips
+103	Siemens
+104	Amica
+105	Lenovo
 \.
 
 COPY DELIVERIES (id_delivery, id_supplier, date_delivery) FROM stdin;
 200	100	2015-11-15 10:15:00
 201	100	2015-08-02 09:00:00
 202	101	2015-03-25 06:00:00
+203	103	2020-01-01 01:00:00
 \.
 
 COPY PRODUCTS_DELIVERIES (id_delivery, id_product, quantity) FROM stdin;
 200	10	5
 200	11	7
 201	9	50
+203	20	2
 \.
 
 COPY CLIENTS_RETURN (id_return, id_sale, id_product, quantity, return_date) FROM stdin;
