@@ -34,6 +34,7 @@ COPY CATEGORIES (id_category, name, vat) FROM stdin;
 4	Laptops	23
 5	UNKNOWN	0
 6	Phones	23
+7	Headphones	23
 8	TVs	23
 9	"Household appliances"	23
 \.
@@ -75,6 +76,8 @@ COPY PRODUCTS (id, id_category, name, id_brand) FROM stdin;
 34	9	Bagio Eco VM 3046	224
 35	9	UltraOne EUOC94DB	222
 36	9	Fen Turbo VM2062	224
+37	7	AirDots Mi True Wireless Earbud	226
+38	7	MDR-RF811	216
 \.
 
 COPY POSSIBLE_PARAMETERS (id_category, id_parameter) FROM stdin;
