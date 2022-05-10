@@ -20,6 +20,8 @@ COPY BRAND (id_brand, name) FROM stdin;
 223	Bosch
 224	Amica
 225	Siemens
+226	Xiaomi
+227	Apple
 \.
 
 COPY PARAMETERS (id_parameter, name, unit) FROM stdin;
@@ -58,6 +60,21 @@ COPY PRODUCTS (id, id_category, name, id_brand) FROM stdin;
 19	9	SR55ZS11ME	225
 20	9	DFM61E6qSEU	224
 21	9	DFM61E6qWEU	224
+22	6	Redmi 9A	226
+23	6	iPhone 13	227
+24	6	Galaxy S22	214
+25	6	Galaxy S20 FE	214
+26	6	Mi 11 Ultra	226
+27	6	Mi 10 Pro	226
+28	6	LG Wing	213
+29	6	XPeria 5 II	216
+30	9	AquaWash&Clean BWD421PRO	223
+31	9	EEG41CB	222
+32	9	Pure D82-4MG Silence	222
+33	9	BGC05A322	223
+34	9	Bagio Eco VM 3046	224
+35	9	UltraOne EUOC94DB	222
+36	9	Fen Turbo VM2062	224
 \.
 
 COPY POSSIBLE_PARAMETERS (id_category, id_parameter) FROM stdin;
