@@ -28,6 +28,7 @@ public class DatabaseManager {
     private PreparedStatement getProductPropertiesFromId;
     private PreparedStatement addNewDelivery;
     private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname;
+    private PreparedStatement getTableOfProducts;
 
     public void close() {
         if (conn == null)
@@ -45,6 +46,7 @@ public class DatabaseManager {
             checkPasswordCorrect.close();
             getFirstName.close();
             getSurname.close();
+            getTableOfProducts.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -56,6 +58,7 @@ public class DatabaseManager {
             getProductPropertiesFromId = null;
             addNewDelivery = null;
             checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
+            getTableOfProducts = null;
         }
     }
 
@@ -85,6 +88,8 @@ public class DatabaseManager {
             checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
             getFirstName = conn.prepareStatement("SELECT first_name FROM employees WHERE login = ?");
             getSurname = conn.prepareStatement("SELECT last_name FROM employees WHERE login = ?");
+
+            getTableOfProducts = conn.prepareStatement("SELECT * FROM nice_repr_of_products()");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -140,6 +145,18 @@ public class DatabaseManager {
             ArrayList<String> returnList = new ArrayList<>();
             while(rs.next()) {
                 returnList.add(rs.getString(1));
+            }
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            return returnList;
+        }
+    }
+
+    private ArrayList<ProductRepr> queryProductList(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            ArrayList<ProductRepr> returnList = new ArrayList<>();
+            while(rs.next()) {
+                returnList.add(new ProductRepr(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDouble(5), rs.getDouble(6)));
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
             return returnList;
@@ -215,6 +232,14 @@ public class DatabaseManager {
         try {
             getSurname.setString(1, name);
             return queryString(getSurname);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<ProductRepr> getTableOfProducts() {
+        try {
+            return queryProductList(getTableOfProducts);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
