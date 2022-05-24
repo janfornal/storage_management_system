@@ -9,7 +9,7 @@ public class TestDatabase {
     public static void main( String args[] ) {
         try {
             DatabaseManager dm = new DatabaseManager(new Service() {});
-            dm.addNewDeliveryNow(10);
+            dm.addNewDeliveryNow(1);
 
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );

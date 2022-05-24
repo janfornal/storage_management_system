@@ -26,18 +26,21 @@ public class DatabaseManager {
     private PreparedStatement getProductNameFromId, getIdFromProductName;
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId;
     private PreparedStatement getProductPropertiesFromId;
-    private PreparedStatement addNewDelivery;
+    private PreparedStatement addNewDelivery, addNewDeliveryNow;
 
     public void close() {
         if (conn == null)
             return;
         try {
             getPriceOfProductFromId.close();
+            getGrossOfProductFromId.close();
             getProductNameFromId.close();
             getIdFromProductName.close();
             getProductsIdFromCategoryId.close();
             getProductsNameFromCategoryId.close();
             getProductPropertiesFromId.close();
+            addNewDelivery.close();
+            addNewDeliveryNow.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -47,6 +50,7 @@ public class DatabaseManager {
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = null;
             getProductPropertiesFromId = null;
+            addNewDelivery = addNewDeliveryNow = null;
         }
     }
 
@@ -71,6 +75,7 @@ public class DatabaseManager {
                     "quantity FROM parameter_products pp WHERE id_product = ?");
 
             addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?)");
+            addNewDeliveryNow = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, now())");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -145,6 +150,7 @@ public class DatabaseManager {
         try {
             addNewDelivery.setInt(1, id_supplier);
             addNewDelivery.setString(2, data);
+            update(addNewDelivery);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -152,8 +158,8 @@ public class DatabaseManager {
 
     public void addNewDeliveryNow(int id_supplier) {   /// class date
         try {
-            addNewDelivery.setInt(1, id_supplier);
-            addNewDelivery.setString(2, "now()");
+            addNewDeliveryNow.setInt(1, id_supplier);
+            update(addNewDeliveryNow);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
