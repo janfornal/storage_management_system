@@ -1,5 +1,5 @@
 create.sql
+target/
 secret/
 json_data/
-target/
 .idea/
