@@ -22,7 +22,7 @@ public class DatabaseManager {
 
     // these variables should either be all nulls or all non-nulls
     private Connection conn;
-    private PreparedStatement getPriceOfProductFromId;
+    private PreparedStatement getPriceOfProductFromId, getGrossOfProductFromId;
     private PreparedStatement getProductNameFromId, getIdFromProductName;
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId;
     private PreparedStatement getProductPropertiesFromId;
@@ -43,7 +43,7 @@ public class DatabaseManager {
             e.printStackTrace(Service.ERROR_STREAM);
         } finally {
             conn = null;
-            getPriceOfProductFromId = null;
+            getPriceOfProductFromId = getGrossOfProductFromId = null;
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = null;
             getProductPropertiesFromId = null;
@@ -58,6 +58,7 @@ public class DatabaseManager {
             initSchema();
 
             getPriceOfProductFromId = conn.prepareStatement("SELECT * FROM get_current_price(?)");
+            getGrossOfProductFromId = conn.prepareStatement("SELECT * FROM get_gross_price(?)");
 
             getProductNameFromId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id = ?");
             getIdFromProductName = conn.prepareStatement("SELECT id FROM PRODUCTS WHERE name = ?");
@@ -117,6 +118,15 @@ public class DatabaseManager {
         try {
             getPriceOfProductFromId.setInt(1, w);
             return queryDouble(getPriceOfProductFromId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Double getGrossOfProductFromId(int w) {
+        try {
+            getGrossOfProductFromId.setInt(1, w);
+            return queryDouble(getGrossOfProductFromId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
