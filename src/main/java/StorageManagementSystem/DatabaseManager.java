@@ -16,8 +16,8 @@ public class DatabaseManager {
         openConnection();
     }
 
-    public DatabaseManager(Service s) {
-        this(new DatabaseConnectionFactory(s));
+    public DatabaseManager(Service s, String ip, Integer port) {
+        this(new DatabaseConnectionFactory(s, ip, port));
     }
 
     // these variables should either be all nulls or all non-nulls
@@ -27,17 +27,22 @@ public class DatabaseManager {
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId;
     private PreparedStatement getProductPropertiesFromId;
     private PreparedStatement addNewDelivery;
+    private PreparedStatement checkLoginExist, checkPasswordCorrect;
 
     public void close() {
         if (conn == null)
             return;
         try {
             getPriceOfProductFromId.close();
+            getGrossOfProductFromId.close();
             getProductNameFromId.close();
             getIdFromProductName.close();
             getProductsIdFromCategoryId.close();
             getProductsNameFromCategoryId.close();
             getProductPropertiesFromId.close();
+            addNewDelivery.close();
+            checkLoginExist.close();
+            checkPasswordCorrect.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -47,6 +52,8 @@ public class DatabaseManager {
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = null;
             getProductPropertiesFromId = null;
+            addNewDelivery = null;
+            checkLoginExist = checkPasswordCorrect = null;
         }
     }
 
@@ -71,6 +78,9 @@ public class DatabaseManager {
                     "quantity FROM parameter_products pp WHERE id_product = ?");
 
             addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?)");
+
+            checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
+            checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -97,6 +107,15 @@ public class DatabaseManager {
         try (ResultSet rs = st.executeQuery()) {
             Service.DB_QUERY_CALL_STREAM.println(st);
             Double res = rs.next() ? rs.getDouble(1) : null;
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + res);
+            return res;
+        }
+    }
+
+    private boolean queryBoolean(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            Boolean res = rs.next() ? rs.getBoolean(1) : null;
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + res);
             return res;
         }
@@ -145,15 +164,26 @@ public class DatabaseManager {
         try {
             addNewDelivery.setInt(1, id_supplier);
             addNewDelivery.setString(2, data);
+            update(addNewDelivery);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void addNewDeliveryNow(int id_supplier) {   /// class date
+    public Boolean checkLoginExist(String login) {
         try {
-            addNewDelivery.setInt(1, id_supplier);
-            addNewDelivery.setString(2, "now()");
+            checkLoginExist.setString(1, login);
+            return queryBoolean(checkLoginExist);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Boolean checkPasswordCorrect(String login, Integer password) {
+        try {
+            checkPasswordCorrect.setString(1, login);
+            checkPasswordCorrect.setInt(2, password);
+            return queryBoolean(checkPasswordCorrect);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
