@@ -8,7 +8,7 @@ import java.util.function.Supplier;
  */
 public class DatabaseConnectionFactory implements Supplier<Connection> {
     private static final String PSQL_DB_DRIVER = "org.postgresql.Driver";
-    private static final String PSQL_DB_CONNECTION = "jdbc:postgresql://20.203.217.128:5432/storage";
+    private static String PSQL_DB_CONNECTION;
     private static final String PSQL_DB_USER = "storagemanagementsystem";
     private static final String PSQL_DB_PASSWORD = "systempassword";
 
@@ -21,8 +21,9 @@ public class DatabaseConnectionFactory implements Supplier<Connection> {
     }
 
     private final Service service;
-    public DatabaseConnectionFactory(Service s) {
+    public DatabaseConnectionFactory(Service s, String ip, Integer port) {
         service = s;
+        PSQL_DB_CONNECTION = "jdbc:postgresql://" + ip + ":" + port.toString() + "/storage";
     }
 
     private Connection get(String url, String user, String password) {
