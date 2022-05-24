@@ -25,6 +25,8 @@ public class DatabaseManager {
     private PreparedStatement getPriceOfProductFromId;
     private PreparedStatement getProductNameFromId, getIdFromProductName;
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId;
+    private PreparedStatement getProductPropertiesFromId;
+    private PreparedStatement addNewDelivery;
 
     public void close() {
         if (conn == null)
@@ -35,6 +37,7 @@ public class DatabaseManager {
             getIdFromProductName.close();
             getProductsIdFromCategoryId.close();
             getProductsNameFromCategoryId.close();
+            getProductPropertiesFromId.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -43,6 +46,7 @@ public class DatabaseManager {
             getPriceOfProductFromId = null;
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = null;
+            getProductPropertiesFromId = null;
         }
     }
 
@@ -53,17 +57,19 @@ public class DatabaseManager {
             conn = connectionSupplier.get();
             initSchema();
 
-            getPriceOfProductFromId = conn.prepareStatement("SELECT net_price" +
-                    "    FROM PRICE_HISTORY" +
-                    "    WHERE id_product = ?" +
-                    "    ORDER BY launch_date DESC" +
-                    "    LIMIT 1");
+            getPriceOfProductFromId = conn.prepareStatement("SELECT * FROM get_current_price(?)");
 
             getProductNameFromId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id = ?");
             getIdFromProductName = conn.prepareStatement("SELECT id FROM PRODUCTS WHERE name = ?");
 
             getProductsIdFromCategoryId = conn.prepareStatement("SELECT id FROM PRODUCTS WHERE id_category = ?");
             getProductsNameFromCategoryId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id_category = ?");
+
+            getProductPropertiesFromId = conn.prepareStatement("SELECT " +
+                    "(SELECT name FROM parameters WHERE parameters.id_parameter = pp.id_parameter)" +
+                    "quantity FROM parameter_products pp WHERE id_product = ?");
+
+            addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?)");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -120,6 +126,24 @@ public class DatabaseManager {
         try {
             getProductsNameFromCategoryId.setInt(1, w);
             return queryStringList(getProductsNameFromCategoryId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addNewDelivery(int id_supplier, String data) {   /// class date
+        try {
+            addNewDelivery.setInt(1, id_supplier);
+            addNewDelivery.setString(2, data);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addNewDeliveryNow(int id_supplier) {   /// class date
+        try {
+            addNewDelivery.setInt(1, id_supplier);
+            addNewDelivery.setString(2, "now()");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
