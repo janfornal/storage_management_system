@@ -12,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 
 public class GUIPresenter extends Application {
     public static DatabaseManager databaseManager;
+    public static String login;
     private static Stage currentStage;
 
     @Override
@@ -28,25 +29,26 @@ public class GUIPresenter extends Application {
         stage.show();
     }
 
-    public void enterMenu(String login, Integer password) {
-        if(!databaseManager.checkLoginExist(login)) {
+    public void enterMenu(String loginUser, Integer password) {
+        if(!databaseManager.checkLoginExist(loginUser)) {
             Platform.runLater(
                     () -> new Alert(Alert.AlertType.ERROR, "Entered login does not exist").showAndWait()
             );
             return;
         }
-        if(!databaseManager.checkPasswordCorrect(login, password)) {
+        if(!databaseManager.checkPasswordCorrect(loginUser, password)) {
             Platform.runLater(
                     () -> new Alert(Alert.AlertType.ERROR, "Wrong password provided").showAndWait()
             );
             return;
         }
         try {
+            login = loginUser;
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(GUIPresenter.class.getResource("/productsTableMenu.fxml"));
             Parent root = loader.load();
             ProductsTableMenu productsTableMenu = loader.getController();
-//            productsTableMenu.setGUIPresenter(this);  TODO possibly to uncomment
+            productsTableMenu.setGUIPresenter(this);
             Scene scene1 = new Scene(root);
             currentStage.setScene(scene1);
             currentStage.show();

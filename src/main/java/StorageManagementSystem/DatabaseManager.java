@@ -27,7 +27,7 @@ public class DatabaseManager {
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId;
     private PreparedStatement getProductPropertiesFromId;
     private PreparedStatement addNewDelivery;
-    private PreparedStatement checkLoginExist, checkPasswordCorrect;
+    private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname;
 
     public void close() {
         if (conn == null)
@@ -43,6 +43,8 @@ public class DatabaseManager {
             addNewDelivery.close();
             checkLoginExist.close();
             checkPasswordCorrect.close();
+            getFirstName.close();
+            getSurname.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -53,7 +55,7 @@ public class DatabaseManager {
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = null;
             getProductPropertiesFromId = null;
             addNewDelivery = null;
-            checkLoginExist = checkPasswordCorrect = null;
+            checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
         }
     }
 
@@ -81,6 +83,8 @@ public class DatabaseManager {
 
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
             checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
+            getFirstName = conn.prepareStatement("SELECT first_name FROM employees WHERE login = ?");
+            getSurname = conn.prepareStatement("SELECT last_name FROM employees WHERE login = ?");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -107,6 +111,15 @@ public class DatabaseManager {
         try (ResultSet rs = st.executeQuery()) {
             Service.DB_QUERY_CALL_STREAM.println(st);
             Double res = rs.next() ? rs.getDouble(1) : null;
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + res);
+            return res;
+        }
+    }
+
+    private String queryString(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            String res = rs.next() ? rs.getString(1) : null;
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + res);
             return res;
         }
@@ -184,6 +197,24 @@ public class DatabaseManager {
             checkPasswordCorrect.setString(1, login);
             checkPasswordCorrect.setInt(2, password);
             return queryBoolean(checkPasswordCorrect);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getFirstName(String name) {
+        try {
+            getFirstName.setString(1, name);
+            return queryString(getFirstName);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getSurname(String name) {
+        try {
+            getSurname.setString(1, name);
+            return queryString(getSurname);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

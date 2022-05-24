@@ -6,6 +6,8 @@ import javafx.scene.control.Label;
 
 public class LeftAnchorPaneMenu {
 
+    private GUIPresenter presenter;
+
     @FXML
     private Button deliveryButton;
 
@@ -23,6 +25,12 @@ public class LeftAnchorPaneMenu {
 
     @FXML
     void initialize() {
+        nameLabel.setText("Name: " + GUIPresenter.databaseManager.getFirstName(GUIPresenter.login));
+        surnameLabel.setText("Surname: " + GUIPresenter.databaseManager.getSurname(GUIPresenter.login));
+    }
+
+    void setGUIPresenter(GUIPresenter guiPresenter) {
+        presenter = guiPresenter;
     }
 
 }
