@@ -1,5 +1,6 @@
 package StorageManagementSystem;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
@@ -46,6 +47,30 @@ public class ProductsTableMenu {
 
     @FXML
     void initialize() {
+        amountColumn.setCellValueFactory(
+                g -> new ReadOnlyObjectWrapper<Double>(g.getValue().amount())
+        );
+
+        brandColumn.setCellValueFactory(
+                g -> new ReadOnlyObjectWrapper<String>(g.getValue().brand())
+        );
+
+        categoryColumn.setCellValueFactory(
+                g -> new ReadOnlyObjectWrapper<String>(g.getValue().category())
+        );
+
+        idColumn.setCellValueFactory(
+                g -> new ReadOnlyObjectWrapper<Integer>(g.getValue().id())
+        );
+
+        nameColumn.setCellValueFactory(
+                g -> new ReadOnlyObjectWrapper<String>(g.getValue().name())
+        );
+
+        priceColumn.setCellValueFactory(
+                g -> new ReadOnlyObjectWrapper<Double>(g.getValue().netPrice())
+        );
+
         productTableView.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getTableOfProducts()));
     }
 
