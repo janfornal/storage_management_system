@@ -79,7 +79,7 @@ public class DatabaseManager {
             getProductsNameFromCategoryId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id_category = ?");
 
             getProductPropertiesFromId = conn.prepareStatement("SELECT " +
-                    "(SELECT name FROM parameters WHERE parameters.id_parameter = pp.id_parameter)" +
+                    "(SELECT name FROM parameters WHERE parameters.id_parameter = pp.id_parameter), " +
                     "quantity FROM parameter_products pp WHERE id_product = ?");
 
             addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?)");
@@ -143,8 +143,15 @@ public class DatabaseManager {
         try (ResultSet rs = st.executeQuery()) {
             Service.DB_QUERY_CALL_STREAM.println(st);
             ArrayList<String> returnList = new ArrayList<>();
+            int colcnt = rs.getMetaData().getColumnCount();
+            StringBuilder returnBuilder = new StringBuilder();
             while(rs.next()) {
-                returnList.add(rs.getString(1));
+                returnBuilder.setLength(0);
+                for(int i=1; i<=colcnt; i++) {
+                    returnBuilder.append(rs.getString(i));
+                    if(i < colcnt) returnBuilder.append(" ");
+                }
+                returnList.add(returnBuilder.toString());
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
             return returnList;
@@ -195,6 +202,15 @@ public class DatabaseManager {
             addNewDelivery.setInt(1, id_supplier);
             addNewDelivery.setString(2, data);
             update(addNewDelivery);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<String> getProductPropertiesFromId(int id) {
+        try {
+            getProductPropertiesFromId.setInt(1, id);
+            return queryStringList(getProductPropertiesFromId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
