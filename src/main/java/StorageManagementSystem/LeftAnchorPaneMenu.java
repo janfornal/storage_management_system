@@ -4,9 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-public class LeftAnchorPaneMenu {
+import java.awt.event.ActionEvent;
 
-    private GUIPresenter presenter;
+public class LeftAnchorPaneMenu {
 
     @FXML
     private Button deliveryButton;
@@ -29,9 +29,8 @@ public class LeftAnchorPaneMenu {
         surnameLabel.setText("Surname: " + GUIPresenter.databaseManager.getSurname(GUIPresenter.login));
     }
 
-    void setGUIPresenter(GUIPresenter guiPresenter) {
-        presenter = guiPresenter;
+    public void provideSaleWindow(javafx.event.ActionEvent actionEvent) {
+        GUIPresenter.enterSaleWindow();
     }
-
 }
 

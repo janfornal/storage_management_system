@@ -29,7 +29,7 @@ public class GUIPresenter extends Application {
         stage.show();
     }
 
-    public void enterMenu(String loginUser, Integer password) {
+    public static void enterMenu(String loginUser, Integer password) {
         if(!databaseManager.checkLoginExist(loginUser)) {
             Platform.runLater(
                     () -> new Alert(Alert.AlertType.ERROR, "Entered login does not exist").showAndWait()
@@ -48,10 +48,24 @@ public class GUIPresenter extends Application {
             loader.setLocation(GUIPresenter.class.getResource("/productsTableMenu.fxml"));
             Parent root = loader.load();
             ProductsTableMenu productsTableMenu = loader.getController();
-            productsTableMenu.setGUIPresenter(this);
             Scene scene1 = new Scene(root);
             currentStage.setScene(scene1);
             currentStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void enterSaleWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(GUIPresenter.class.getResource("/addSaleWindow.fxml"));
+            Parent root = loader.load();
+            AddSaleWindow addSaleWindow = loader.getController();
+            Scene scene1 = new Scene(root);
+            Stage temp = new Stage();
+            temp.setScene(scene1);
+            temp.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
