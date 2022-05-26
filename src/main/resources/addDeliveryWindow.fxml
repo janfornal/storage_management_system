@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.AddDeliveryWindow">
+   <children>
+      <fx:include source="addDeliveryMenu.fxml" />
+      <fx:include source="flattenedProductAnchor.fxml" />
+      <AnchorPane prefHeight="50.0" prefWidth="750.0">
+         <children>
+            <Button fx:id="addProductButton" layoutX="500.0" layoutY="1.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" text="Add product" />
+            <Button fx:id="addDeliveryButton" layoutX="625.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="99.0" text="Add delivery" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>

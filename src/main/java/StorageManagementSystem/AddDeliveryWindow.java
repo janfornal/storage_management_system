@@ -2,21 +2,19 @@ package StorageManagementSystem;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
 
-public class AddSaleWindow {
+public class AddDeliveryWindow {
 
     @FXML
-    private AddSaleMenu addSaleMenuController;
+    private AddDeliveryMenu addDeliveryMenuController;
 
     @FXML
     private FlattenedProductAnchor flattenedProductAnchorController;
 
     @FXML
-    private Button addProductButton;
+    private Button addDeliveryButton;
 
     @FXML
-    private Button addSaleButton;
+    private Button addProductButton;
 
 }
-

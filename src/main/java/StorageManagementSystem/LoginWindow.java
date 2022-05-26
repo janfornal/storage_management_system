@@ -11,8 +11,6 @@ import javafx.scene.layout.AnchorPane;
 
 public class LoginWindow {
 
-    private GUIPresenter presenter;
-
     @FXML
     private Label LoginLabel;
 
@@ -21,6 +19,9 @@ public class LoginWindow {
 
     @FXML
     private Button loginButton;
+
+    @FXML
+    private Button registerButton;
 
     @FXML
     private PasswordField passwordField;
@@ -35,13 +36,11 @@ public class LoginWindow {
     public void initialize() {
     }
 
-    @FXML
-    void enterApplication(ActionEvent event) {
-        presenter.enterMenu(usernameField.getText(), Integer.parseInt(passwordField.getText()));
+    public void enterApplication(ActionEvent event) {
+        GUIPresenter.enterMenu(usernameField.getText(), Integer.parseInt(passwordField.getText()));
     }
 
-    public void setGUIPresenter(GUIPresenter guiPresenter) {
-        presenter = guiPresenter;
+    public void changeRegisterWindow(ActionEvent actionEvent) {
+        GUIPresenter.showEnterStage(EnterValues.REGISTER);
     }
-
 }

@@ -30,7 +30,11 @@ public class LeftAnchorPaneMenu {
     }
 
     public void provideSaleWindow(javafx.event.ActionEvent actionEvent) {
-        GUIPresenter.enterSaleWindow();
+        GUIPresenter.enterFunctionalityWindow(FunctionalityValues.SALE);
+    }
+
+    public void provideDeliveryWindow(javafx.event.ActionEvent actionEvent) {
+        GUIPresenter.enterFunctionalityWindow(FunctionalityValues.DELIVERY);
     }
 }
 

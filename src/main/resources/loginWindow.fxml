@@ -17,6 +17,7 @@
                   <Font size="20.0" />
                </font>
             </Label>
+            <Button fx:id="registerButton" layoutX="14.0" layoutY="261.0" mnemonicParsing="false" onAction="#changeRegisterWindow" prefHeight="26.0" prefWidth="86.0" text="Register" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="rightAnchor" prefHeight="300.0" prefWidth="225.0">
