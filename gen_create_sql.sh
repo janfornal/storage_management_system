@@ -1,1 +1,1 @@
-cat clear.sql create_tables.sql create_triggers.sql simple_data.sql > create.sql
+cat clear.sql create_tables.sql create_triggers.sql functions.sql inserter.sql > create.sql
