@@ -3,14 +3,14 @@ package StorageManagementSystem;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
 
 public class FlattenedProductAnchor {
+
+    private ArrayList<ProductRepr> observedArray;
 
     @FXML
     private TableColumn<ProductRepr, Double> amountColumn;
@@ -59,7 +59,11 @@ public class FlattenedProductAnchor {
                 g -> new ReadOnlyObjectWrapper<Double>(g.getValue().netPrice())
         );
 
-//        productTableView.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getTableOfProducts()));
+        observedArray = new ArrayList<ProductRepr>();
     }
 
+    public void add(ProductRepr productRepr) {
+        observedArray.add(productRepr);
+        productTableView.setItems(FXCollections.observableArrayList(observedArray));
+    }
 }

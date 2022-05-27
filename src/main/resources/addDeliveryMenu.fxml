@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.AddDeliveryMenu">
    <children>
-      <ChoiceBox fx:id="categoryChoiceBox" layoutX="25.0" layoutY="25.0" prefWidth="150.0" />
-      <ChoiceBox fx:id="nameChoiceBox" layoutX="25.0" layoutY="65.0" prefWidth="150.0" />
-      <ChoiceBox fx:id="supplierChoiceBox" layoutX="25.0" layoutY="105.0" prefHeight="26.0" prefWidth="150.0" />
+      <ComboBox fx:id="categoryComboBox" layoutX="25.0" layoutY="25.0" onAction="#chosenCategoryHandler" prefWidth="150.0" />
+      <ComboBox fx:id="nameComboBox" layoutX="25.0" layoutY="65.0" prefWidth="150.0" />
+      <ComboBox fx:id="supplierComboBox" layoutX="25.0" layoutY="105.0" prefWidth="150.0" />
       <TextField fx:id="selectAmountArea" layoutX="576.0" layoutY="105.0" prefHeight="26.0" prefWidth="150.0" promptText="Enter number" />
    </children>
 </AnchorPane>
