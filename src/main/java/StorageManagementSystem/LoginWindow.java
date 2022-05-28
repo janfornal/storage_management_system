@@ -1,12 +1,10 @@
 package StorageManagementSystem;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
 public class LoginWindow {
@@ -37,7 +35,21 @@ public class LoginWindow {
     }
 
     public void enterApplication(ActionEvent event) {
-        GUIPresenter.enterMenu(usernameField.getText(), Integer.parseInt(passwordField.getText()));
+        String loginUser = usernameField.getText();
+        String password = passwordField.getText();
+        if(loginUser == null || !GUIPresenter.databaseManager.checkLoginExist(loginUser)) {
+            Platform.runLater(
+                    () -> new Alert(Alert.AlertType.ERROR, "Entered login does not exist").showAndWait()
+            );
+            return;
+        }
+        if(password == null || !GUIPresenter.databaseManager.checkPasswordCorrect(loginUser, password)) {
+            Platform.runLater(
+                    () -> new Alert(Alert.AlertType.ERROR, "Wrong password provided").showAndWait()
+            );
+            return;
+        }
+        GUIPresenter.enterMenu(loginUser);
     }
 
     public void changeRegisterWindow(ActionEvent actionEvent) {

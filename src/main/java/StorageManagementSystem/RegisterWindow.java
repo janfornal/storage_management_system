@@ -1,11 +1,9 @@
 package StorageManagementSystem;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
 public class RegisterWindow {
@@ -43,7 +41,37 @@ public class RegisterWindow {
     }
 
     public void enterApplication(ActionEvent event) {
-//        GUIPresenter.enterMenu(usernameField.getText(), Integer.parseInt(passwordField.getText()));
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
+        String loginUser = usernameField.getText();
+        String password = passwordField.getText();
+        if(firstName == null || lastName == null || loginUser == null || password == null) {
+            Platform.runLater(
+                    () -> new Alert(Alert.AlertType.ERROR, "Please attach essential info").showAndWait()
+            );
+            return;
+        }
+        if(firstName.equals("") || lastName.equals("") || loginUser.equals("") || password.equals("")) {
+            Platform.runLater(
+                    () -> new Alert(Alert.AlertType.ERROR, "You entered no information").showAndWait()
+            );
+            return;
+        }
+        if(GUIPresenter.databaseManager.checkLoginExist(loginUser)) {
+            Platform.runLater(
+                    () -> new Alert(Alert.AlertType.ERROR, "Entered login is already taken").showAndWait()
+            );
+            return;
+        }
+        try {
+            GUIPresenter.databaseManager.registerNewEmployee(loginUser, password, firstName, lastName);
+        } catch (RuntimeException e) {
+            Platform.runLater(
+                    () -> new Alert(Alert.AlertType.ERROR, "Registration has failed!").showAndWait()
+            );
+            return;
+        }
+        GUIPresenter.enterMenu(loginUser);
     }
 
 }

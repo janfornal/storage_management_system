@@ -30,6 +30,7 @@ public class DatabaseManager {
     private PreparedStatement addNewDelivery, addNewDeliveryProduct;
     private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname;
     private PreparedStatement getTableOfProducts;
+    private PreparedStatement registerNewEmployee;
 
     public void close() {
         if (conn == null)
@@ -51,6 +52,7 @@ public class DatabaseManager {
             getFirstName.close();
             getSurname.close();
             getTableOfProducts.close();
+            registerNewEmployee.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -64,6 +66,7 @@ public class DatabaseManager {
             addNewDelivery = addNewDeliveryProduct = null;
             checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
             getTableOfProducts = null;
+            registerNewEmployee = null;
         }
     }
 
@@ -99,6 +102,8 @@ public class DatabaseManager {
             getSurname = conn.prepareStatement("SELECT last_name FROM employees WHERE login = ?");
 
             getTableOfProducts = conn.prepareStatement("SELECT * FROM nice_repr_of_products()");
+
+            registerNewEmployee = conn.prepareStatement("INSERT INTO employees (\"login\", \"password\", first_name, last_name) VALUES (?, ?, ?, ?)");
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -305,6 +310,18 @@ public class DatabaseManager {
     public ArrayList<CategoryRecord> getAllCategories() {
         try {
             return queryCategoryList(getAllCategories);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void registerNewEmployee(String login, String password, String first_name, String last_name) {
+        try {
+            registerNewEmployee.setString(1, login);
+            registerNewEmployee.setString(2, password);
+            registerNewEmployee.setString(3, first_name);
+            registerNewEmployee.setString(4, last_name);
+            update(registerNewEmployee);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

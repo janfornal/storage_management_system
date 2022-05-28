@@ -56,21 +56,9 @@ public class GUIPresenter extends Application {
         enterStage.show();
     }
 
-    public static void enterMenu(String loginUser, String password) {
-        if(!databaseManager.checkLoginExist(loginUser)) {
-            Platform.runLater(
-                    () -> new Alert(Alert.AlertType.ERROR, "Entered login does not exist").showAndWait()
-            );
-            return;
-        }
-        if(!databaseManager.checkPasswordCorrect(loginUser, password)) {
-            Platform.runLater(
-                    () -> new Alert(Alert.AlertType.ERROR, "Wrong password provided").showAndWait()
-            );
-            return;
-        }
+    public static void enterMenu(String loginUser) {
+        login = loginUser;
         try {
-            login = loginUser;
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(GUIPresenter.class.getResource("/productsTableMenu.fxml"));
             Parent root = loader.load();
