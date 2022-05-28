@@ -24,7 +24,7 @@ public class RegisterWindow {
     private Button loginButton;
 
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
 
     @FXML
     private Button registerButton;
@@ -33,7 +33,7 @@ public class RegisterWindow {
     private AnchorPane rightAnchor;
 
     @FXML
-    private PasswordField usernameField;
+    private TextField usernameField;
 
     @FXML
     void changeLoginWindow(ActionEvent event) {
