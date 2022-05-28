@@ -56,7 +56,7 @@ public class GUIPresenter extends Application {
         enterStage.show();
     }
 
-    public static void enterMenu(String loginUser, Integer password) {
+    public static void enterMenu(String loginUser, String password) {
         if(!databaseManager.checkLoginExist(loginUser)) {
             Platform.runLater(
                     () -> new Alert(Alert.AlertType.ERROR, "Entered login does not exist").showAndWait()

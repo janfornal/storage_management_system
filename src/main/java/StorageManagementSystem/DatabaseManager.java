@@ -257,10 +257,10 @@ public class DatabaseManager {
         }
     }
 
-    public Boolean checkPasswordCorrect(String login, Integer password) {
+    public Boolean checkPasswordCorrect(String login, String password) {
         try {
             checkPasswordCorrect.setString(1, login);
-            checkPasswordCorrect.setInt(2, password);
+            checkPasswordCorrect.setString(2, password);
             return queryBoolean(checkPasswordCorrect);
         } catch (SQLException e) {
             throw new RuntimeException(e);

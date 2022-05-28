@@ -42,9 +42,8 @@ public class RegisterWindow {
         GUIPresenter.showEnterStage(EnterValues.LOGIN);
     }
 
-    @FXML
-    void enterApplication(ActionEvent event) {
-
+    public void enterApplication(ActionEvent event) {
+//        GUIPresenter.enterMenu(usernameField.getText(), Integer.parseInt(passwordField.getText()));
     }
 
 }

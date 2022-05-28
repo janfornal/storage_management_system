@@ -89,7 +89,7 @@ CREATE TABLE CLIENTS_RETURN (
 CREATE TABLE EMPLOYEES (
     id_employee INTEGER PRIMARY KEY,
     "login" VARCHAR(16) NOT NULL,
-    "password" INTEGER NOT NULL, --remember to change to hex or varchar
+    "password" VARCHAR(100) NOT NULL, --remember to change to hex or varchar
     first_name VARCHAR(16) NOT NULL,
     last_name VARCHAR(16) NOT NULL
 
