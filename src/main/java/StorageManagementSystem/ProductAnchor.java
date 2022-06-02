@@ -60,7 +60,7 @@ public class ProductAnchor {
                 g -> new ReadOnlyObjectWrapper<Double>(g.getValue().netPrice())
         );
 
-        productTableView.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getTableOfProducts()));
+        actualizeList();
 
         productTableView.setRowFactory(tv -> {
             TableRow<ProductRepr> row = new TableRow<>();
@@ -78,4 +78,7 @@ public class ProductAnchor {
         });
     }
 
+    public void actualizeList() {
+        productTableView.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getTableOfProducts()));
+    }
 }

@@ -23,7 +23,7 @@ public class AddDeliveryMenu {
     @FXML
     void initialize() {
         categoryComboBox.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getAllCategories()));
-        Callback<ListView<CategoryRecord>, ListCell<CategoryRecord>> cellFactory = new Callback<>() { // TODO how this can be shortened
+        Callback<ListView<CategoryRecord>, ListCell<CategoryRecord>> cellFactory = new Callback<>() {
             @Override
             public ListCell<CategoryRecord> call(ListView<CategoryRecord> l) {
                 return new ListCell<>() {

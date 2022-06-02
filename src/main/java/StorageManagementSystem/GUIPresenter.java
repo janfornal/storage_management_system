@@ -15,6 +15,7 @@ import java.io.IOException;
 public class GUIPresenter extends Application {
     public static DatabaseManager databaseManager;
     public static String login;
+    public static ProductsTableMenu menuController;
     private static Stage enterStage;
     private static Stage currentStage;
     private static Stage functionalityStage;
@@ -47,6 +48,7 @@ public class GUIPresenter extends Application {
             loader.setLocation(GUIPresenter.class.getResource("/productsTableMenu.fxml"));
             Parent root = loader.load();
             ProductsTableMenu productsTableMenu = loader.getController();
+            menuController = productsTableMenu;
             Scene scene1 = new Scene(root);
             enterStage.close();
             currentStage = new Stage();
@@ -76,5 +78,10 @@ public class GUIPresenter extends Application {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void closeFunctionalityStage() {
+        functionalityStage.close();
+        functionalityStage = null;
     }
 }

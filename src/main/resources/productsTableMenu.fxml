@@ -10,7 +10,7 @@
       <VBox fx:id="rightVBox" prefHeight="600.0" prefWidth="750.0">
          <children>
             <AnchorPane fx:id="optionsAnchorPane" prefHeight="150.0" prefWidth="750.0" />
-            <fx:include source="productAnchor.fxml" />
+            <fx:include fx:id="productAnchor" source="productAnchor.fxml" />
          </children>
       </VBox>
    </children>

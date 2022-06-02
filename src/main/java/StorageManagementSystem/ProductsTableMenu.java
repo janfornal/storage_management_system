@@ -21,7 +21,7 @@ public class ProductsTableMenu {
     private AnchorPane optionsAnchorPane;
 
     @FXML
-    private AnchorPane productAnchorController;
+    private ProductAnchor productAnchorController;
 
     @FXML
     private VBox rightVBox;
@@ -30,4 +30,7 @@ public class ProductsTableMenu {
     void initialize() {
     }
 
+    public void actualizeList() {
+        productAnchorController.actualizeList();
+    }
 }

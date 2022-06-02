@@ -66,4 +66,8 @@ public class FlattenedProductAnchor {
         observedArray.add(productRepr);
         productTableView.setItems(FXCollections.observableArrayList(observedArray));
     }
+
+    public ArrayList<ProductRepr> getObservedArray() {
+        return observedArray;
+    }
 }

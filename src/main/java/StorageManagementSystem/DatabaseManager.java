@@ -93,7 +93,7 @@ public class DatabaseManager {
                     "(SELECT name FROM parameters WHERE parameters.id_parameter = pp.id_parameter), " +
                     "quantity FROM parameter_products pp WHERE id_product = ?");
 
-            addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?)");
+            addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?) RETURNING id_delivery");
             addNewDeliveryProduct = conn.prepareStatement("INSERT INTO products_deliveries (id_delivery, id_product, quantity) VALUES (?, ?, ?)");
 
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
@@ -124,6 +124,15 @@ public class DatabaseManager {
         int res = update(st);
         st.close();
         return res;
+    }
+
+    private Integer queryInteger(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            Integer res = rs.next() ? rs.getInt(1) : null;
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + res);
+            return res;
+        }
     }
 
     private Double queryDouble(PreparedStatement st) throws SQLException {
@@ -223,11 +232,11 @@ public class DatabaseManager {
         }
     }
 
-    public void addNewDelivery(int id_supplier, String data) {   /// class date
+    public int addNewDelivery(int id_supplier, Date data) {   /// class date
         try {
             addNewDelivery.setInt(1, id_supplier);
-            addNewDelivery.setString(2, data);
-            update(addNewDelivery);
+            addNewDelivery.setDate(2, data);
+            return queryInteger(addNewDelivery);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -238,7 +247,7 @@ public class DatabaseManager {
             addNewDeliveryProduct.setInt(1, id_delivery);
             addNewDeliveryProduct.setInt(2, id_product);
             addNewDeliveryProduct.setDouble(3, quantity);
-            update(addNewDelivery);
+            update(addNewDeliveryProduct);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
