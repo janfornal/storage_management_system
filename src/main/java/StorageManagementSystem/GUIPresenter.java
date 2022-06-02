@@ -27,26 +27,10 @@ public class GUIPresenter extends Application {
 
     public static void showEnterStage(EnterValues val) {
         FXMLLoader loader = new FXMLLoader();
-        switch(val) {
-            case LOGIN:
-                loader.setLocation(GUIPresenter.class.getResource("/loginWindow.fxml"));
-                break;
-            case REGISTER:
-                loader.setLocation(GUIPresenter.class.getResource("/registerWindow.fxml"));
-                break;
-            default:
-        }
+        val.setLocation(loader);
         try {
             Parent root = loader.load();
-            switch(val) {
-                case LOGIN:
-                    LoginWindow loginWindow = loader.getController();
-                    break;
-                case REGISTER:
-                    RegisterWindow registerWindow = loader.getController();
-                    break;
-                default:
-            }
+            val.getController(loader);
             Scene scene1 = new Scene(root);
             enterStage.setResizable(false);
             enterStage.setScene(scene1);
@@ -82,31 +66,9 @@ public class GUIPresenter extends Application {
         }
         try {
             FXMLLoader loader = new FXMLLoader();
-            switch(val) {
-                case DELIVERY:
-                    loader.setLocation(GUIPresenter.class.getResource("/addDeliveryWindow.fxml"));
-                    break;
-                case SALE:
-                    loader.setLocation(GUIPresenter.class.getResource("/addSaleWindow.fxml"));
-                    break;
-                case RETURN:
-                    loader.setLocation(GUIPresenter.class.getResource("/addReturnWindow.fxml"));
-                    break;
-                default:
-            }
+            val.setLocation(loader);
             Parent root = loader.load();
-            switch(val) {
-                case DELIVERY:
-                    AddDeliveryWindow addDeliveryWindow = loader.getController();
-                    break;
-                case SALE:
-                    AddSaleWindow addSaleWindow = loader.getController();
-                    break;
-                case RETURN:
-//                    AddReturnWindow addReturnWindow = loader.getController();
-                    break;
-                default:
-            }
+            val.getController(loader);
             Scene scene1 = new Scene(root);
             functionalityStage = new Stage();
             functionalityStage.setScene(scene1);
