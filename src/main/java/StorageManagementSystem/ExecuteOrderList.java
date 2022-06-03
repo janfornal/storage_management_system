@@ -11,14 +11,19 @@ public class ExecuteOrderList {
     public String orderList = "";
 
     public void testTransaction() {
-        String exactProcedure = "BEGIN;"
+        String exactProcedure = "BEGIN; "
+                + "CREATE OR REPLACE FUNCTION virtual_transaction() returns record as "
+                + "$$DECLARE special_id integer; ret record; "
+                + "BEGIN "
                 + createTransaction
-                + "RETURNING id_sale AS special_id;"
+                + "RETURNING id_sale AS special_id; "
                 + orderList
-                + "SELECT * FROM get_current_price(special_id);"
-                + "SELECT * FROM get_gross_price(special_id);"
-                + "ROLLBACK;"
-                + "COMMIT;";
+                + "ret := (SELECT * FROM get_current_price(special_id), SELECT * FROM get_gross_price(special_id)); "
+                + "RETURN ret; "
+                + "END;$$ LANGUAGE plpgsql; "
+                + "SELECT * FROM virtual_transaction(); "
+                + "ROLLBACK; "
+                + "COMMIT; ";
         System.out.println(exactProcedure);
         try {
             ResultSet rs = GUIPresenter.databaseManager.queryAnything(exactProcedure);
