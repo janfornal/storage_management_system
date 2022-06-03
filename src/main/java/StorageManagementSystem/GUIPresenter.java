@@ -72,17 +72,21 @@ public class GUIPresenter extends Application {
             Scene scene1 = new Scene(root);
             functionalityStage = new Stage();
             functionalityStage.setScene(scene1);
-            functionalityStage.setOnCloseRequest(e -> closeFunctionalityStage());
+            functionalityStage.setOnCloseRequest(e -> standardCloseFunctionalityStage());
             functionalityStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void closeFunctionalityStage() {
+    public static void standardCloseFunctionalityStage() {   //standard sie odpala, gdy chcemy zamknąć okienko za pomocą iksa
         if(functionalityController instanceof AddSaleWindow controllerCast) {
             controllerCast.close();
         }
+        closeFunctionalityStage();
+    }
+
+    public static void closeFunctionalityStage() {    //zawsze przy zamknięciu okienka np. przy zatwierdzeniu transakcji
         functionalityStage.close();
         functionalityStage = null;
         GUIPresenter.menuController.actualizeList();

@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
-public class RegisterWindow {
+public class RegisterWindow implements GeneralWindow {
 
     @FXML
     private Label RegisterLabel;

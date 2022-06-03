@@ -50,6 +50,6 @@ public class AddDeliveryWindow implements FunctonalityWindow {
         for(int i=0; i<idList.size(); i++) {
             GUIPresenter.databaseManager.addNewDeliveryProduct(id_delivery, idList.get(i), amountList.get(i));
         }
-        GUIPresenter.closeFunctionalityStage();
+        GUIPresenter.standardCloseFunctionalityStage();
     }
 }

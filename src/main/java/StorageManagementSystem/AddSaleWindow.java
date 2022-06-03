@@ -64,7 +64,7 @@ public class AddSaleWindow implements FunctonalityWindow {
     }
 
     public void addSaleTransaction(ActionEvent actionEvent) {
-
+        GUIPresenter.closeFunctionalityStage();
     }
 }
 
