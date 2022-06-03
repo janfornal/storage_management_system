@@ -12,7 +12,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 
-public class ProductsTableMenu {
+public class ProductsTableMenu implements GeneralWindow {
 
     @FXML
     private LeftAnchorPaneMenu leftAnchorPaneMenuController;

@@ -7,12 +7,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
-import java.sql.Date;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-public class AddDeliveryWindow {
+public class AddDeliveryWindow implements FunctonalityWindow {
 
     @FXML
     private AddDeliveryMenu addDeliveryMenuController;
@@ -53,7 +50,6 @@ public class AddDeliveryWindow {
         for(int i=0; i<idList.size(); i++) {
             GUIPresenter.databaseManager.addNewDeliveryProduct(id_delivery, idList.get(i), amountList.get(i));
         }
-        GUIPresenter.menuController.actualizeList();
         GUIPresenter.closeFunctionalityStage();
     }
 }

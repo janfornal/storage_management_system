@@ -7,7 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 
-public class LoginWindow {
+public class LoginWindow implements GeneralWindow {
 
     @FXML
     private Label LoginLabel;

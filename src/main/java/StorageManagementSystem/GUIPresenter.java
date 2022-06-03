@@ -4,11 +4,9 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
 
@@ -16,6 +14,7 @@ public class GUIPresenter extends Application {
     public static DatabaseManager databaseManager;
     public static String login;
     public static ProductsTableMenu menuController;
+    public static FunctonalityWindow functionalityController;
     private static Stage enterStage;
     private static Stage currentStage;
     private static Stage functionalityStage;
@@ -47,8 +46,7 @@ public class GUIPresenter extends Application {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(GUIPresenter.class.getResource("/productsTableMenu.fxml"));
             Parent root = loader.load();
-            ProductsTableMenu productsTableMenu = loader.getController();
-            menuController = productsTableMenu;
+            menuController = loader.getController();
             Scene scene1 = new Scene(root);
             enterStage.close();
             currentStage = new Stage();
@@ -70,10 +68,11 @@ public class GUIPresenter extends Application {
             FXMLLoader loader = new FXMLLoader();
             val.setLocation(loader);
             Parent root = loader.load();
-            val.getController(loader);
+            functionalityController = (FunctonalityWindow) val.getController(loader);
             Scene scene1 = new Scene(root);
             functionalityStage = new Stage();
             functionalityStage.setScene(scene1);
+            functionalityStage.setOnCloseRequest(e -> closeFunctionalityStage());
             functionalityStage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -81,7 +80,11 @@ public class GUIPresenter extends Application {
     }
 
     public static void closeFunctionalityStage() {
+        if(functionalityController instanceof AddSaleWindow controllerCast) {
+            controllerCast.close();
+        }
         functionalityStage.close();
         functionalityStage = null;
+        GUIPresenter.menuController.actualizeList();
     }
 }

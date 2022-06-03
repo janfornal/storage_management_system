@@ -83,7 +83,18 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
---trigger below disables putting new record in PRODUKTY_SPRZEDAZ where ilosc > ilosc in 
+CREATE FUNCTION update_increase_store_status_2()
+    RETURNS trigger AS
+$$
+BEGIN
+    UPDATE STORE_STATUS
+    SET quantity = quantity + OLD.quantity
+    WHERE id_product = OLD.id_product;
+    RETURN OLD;
+END;
+$$ LANGUAGE 'plpgsql';
+
+--trigger below disables putting new record in PRODUKTY_SPRZEDAZ where ilosc > ilosc in
 --respective record in stan_magazynu, also changes respective ilosc value
 CREATE TRIGGER trigger_ilosc_ps  
 AFTER INSERT
@@ -91,6 +102,11 @@ ON PRODUCTS_SOLD
 FOR EACH ROW
 EXECUTE PROCEDURE update_decrease_store_status();
 
+CREATE TRIGGER trigger_ilosc_ps_2
+    BEFORE DELETE
+    ON PRODUCTS_SOLD
+    FOR EACH ROW
+EXECUTE PROCEDURE update_increase_store_status_2();
 --updates record in stan_magazynu, after inserting into PRODUKTY_DOSTAWY
 CREATE TRIGGER trigger_ilosc_pd  
 AFTER INSERT

@@ -23,11 +23,13 @@ public class DatabaseManager {
     // these variables should either be all nulls or all non-nulls
     private Connection conn;
     private PreparedStatement getPriceOfProductFromId, getGrossOfProductFromId;
+    private PreparedStatement getPriceOfProductFromSale, getGrossOfProductFromSale;
     private PreparedStatement getProductNameFromId, getIdFromProductName;
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId, getProductsFromCategoryName;
     private PreparedStatement getAllCategories;
     private PreparedStatement getProductPropertiesFromId;
     private PreparedStatement addNewDelivery, addNewDeliveryProduct;
+    private PreparedStatement addNewSale, addNewSaleProduct;
     private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname;
     private PreparedStatement getTableOfProducts;
     private PreparedStatement registerNewEmployee;
@@ -38,6 +40,8 @@ public class DatabaseManager {
         try {
             getPriceOfProductFromId.close();
             getGrossOfProductFromId.close();
+            getPriceOfProductFromSale.close();
+            getGrossOfProductFromSale.close();
             getProductNameFromId.close();
             getIdFromProductName.close();
             getProductsIdFromCategoryId.close();
@@ -47,6 +51,8 @@ public class DatabaseManager {
             getProductPropertiesFromId.close();
             addNewDelivery.close();
             addNewDeliveryProduct.close();
+            addNewSale.close();
+            addNewSaleProduct.close();
             checkLoginExist.close();
             checkPasswordCorrect.close();
             getFirstName.close();
@@ -59,11 +65,13 @@ public class DatabaseManager {
         } finally {
             conn = null;
             getPriceOfProductFromId = getGrossOfProductFromId = null;
+            getPriceOfProductFromSale = getGrossOfProductFromSale = null;
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = getProductsFromCategoryName = null;
             getAllCategories = null;
             getProductPropertiesFromId = null;
             addNewDelivery = addNewDeliveryProduct = null;
+            addNewSale = addNewSaleProduct = null;
             checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
             getTableOfProducts = null;
             registerNewEmployee = null;
@@ -80,6 +88,9 @@ public class DatabaseManager {
             getPriceOfProductFromId = conn.prepareStatement("SELECT * FROM get_current_price(?)");
             getGrossOfProductFromId = conn.prepareStatement("SELECT * FROM get_gross_price(?)");
 
+            getPriceOfProductFromSale = conn.prepareStatement("SELECT * FROM get_sale_price(?)");
+            getGrossOfProductFromSale = conn.prepareStatement("SELECT * FROM get_gross_sale_price(?)");
+
             getProductNameFromId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id = ?");
             getIdFromProductName = conn.prepareStatement("SELECT id FROM PRODUCTS WHERE name = ?");
 
@@ -95,6 +106,9 @@ public class DatabaseManager {
 
             addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?) RETURNING id_delivery");
             addNewDeliveryProduct = conn.prepareStatement("INSERT INTO products_deliveries (id_delivery, id_product, quantity) VALUES (?, ?, ?)");
+
+            addNewSale = conn.prepareStatement("INSERT INTO sales (sales_date) VALUES (?) RETURNING id_sale");
+            addNewSaleProduct = conn.prepareStatement("INSERT INTO products_sold (id_sale, id_product, quantity) VALUES (?, ?, ?)");
 
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
             checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
@@ -232,6 +246,24 @@ public class DatabaseManager {
         }
     }
 
+    public Double getPriceOfProductFromSale(int w) {
+        try {
+            getPriceOfProductFromSale.setInt(1, w);
+            return queryDouble(getPriceOfProductFromSale);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Double getGrossOfProductFromSale(int w) {
+        try {
+            getGrossOfProductFromSale.setInt(1, w);
+            return queryDouble(getGrossOfProductFromSale);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ArrayList<String> getProductsNameFromCategoryId(int w) {
         try {
             getProductsNameFromCategoryId.setInt(1, w);
@@ -343,6 +375,26 @@ public class DatabaseManager {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int updateFromString(String orderList) throws SQLException {
+        return updateOnce(conn.prepareStatement(orderList));
+    }
+
+    public int addNewSale(Date data) {
+        try {
+            addNewSale.setDate(1, data);
+            return queryInteger(addNewSale);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addNewSaleProduct(int id_sale, int id_product, double quantity) throws SQLException {  // łapiemy triggery z psql
+        addNewSaleProduct.setInt(1, id_sale);
+        addNewSaleProduct.setInt(2, id_product);
+        addNewSaleProduct.setDouble(3, quantity);
+        update(addNewSaleProduct);
     }
 }
 
