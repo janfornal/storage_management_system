@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION get_current_price(id INTEGER)   -- dodaj timestamp
+CREATE OR REPLACE FUNCTION get_current_price(id INTEGER)   -- pierwszych 3 funkcji nie powinno być, jak bedzie czas to refactor
 RETURNS numeric(8, 2) AS 
 $$
 BEGIN
@@ -50,7 +50,7 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION get_price(id INTEGER, t timestamp)
+CREATE OR REPLACE FUNCTION get_price(id INTEGER, t DATE)
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
@@ -62,7 +62,7 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION get_vat(id_arg INTEGER, t timestamp)
+CREATE OR REPLACE FUNCTION get_vat(id_arg INTEGER, t DATE)
     RETURNS integer AS
 $$
 BEGIN
@@ -74,7 +74,7 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION get_gross_price_time(id INTEGER, t timestamp)
+CREATE OR REPLACE FUNCTION get_gross_price_time(id INTEGER, t DATE)
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
@@ -82,21 +82,21 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION get_sale_price(id INTEGER, t timestamp)
+CREATE OR REPLACE FUNCTION get_sale_price(id INTEGER)
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
-    RETURN (SELECT SUM(get_price(id_product, quantity))
+    RETURN (SELECT SUM(get_price(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_sold
             WHERE id_sale = id);
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE OR REPLACE FUNCTION get_gross_sale_price(id INTEGER, t timestamp)
+CREATE OR REPLACE FUNCTION get_gross_sale_price(id INTEGER)
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
-    RETURN (SELECT SUM(get_gross_price_time(id_product, quantity))
+    RETURN (SELECT SUM(get_gross_price_time(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_sold
             WHERE id_sale = id);
 END;

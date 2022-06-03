@@ -30,9 +30,14 @@ DROP FUNCTION IF EXISTS update_increase_store_status()          CASCADE;
 DROP FUNCTION IF EXISTS insert_id_products_to_store_status()    CASCADE;
 
 
-DROP FUNCTION IF EXISTS nice_repr_of_products()                 CASCADE;
-DROP FUNCTION IF EXISTS get_gross_price()                       CASCADE;
-DROP FUNCTION IF EXISTS get_current_vat()                       CASCADE;
-DROP FUNCTION IF EXISTS get_current_price()                     CASCADE;
+DROP FUNCTION IF EXISTS nice_repr_of_products                   CASCADE;
+DROP FUNCTION IF EXISTS get_gross_price                         CASCADE;
+DROP FUNCTION IF EXISTS get_current_vat                         CASCADE;
+DROP FUNCTION IF EXISTS get_current_price                       CASCADE;
+DROP FUNCTION IF EXISTS get_price                               CASCADE;
+DROP FUNCTION IF EXISTS get_vat                                 CASCADE;
+DROP FUNCTION IF EXISTS get_gross_price_time                    CASCADE;
+DROP FUNCTION IF EXISTS get_sale_price                          CASCADE;
+DROP FUNCTION IF EXISTS get_gross_sale_price                    CASCADE;
 
 COMMIT;
