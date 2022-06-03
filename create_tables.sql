@@ -91,7 +91,7 @@ CREATE TABLE CLIENTS (
     "password" INTEGER NOT NULL, --remember to change to hex or varchar
     first_name VARCHAR(16) NOT NULL,
     last_name VARCHAR(16) NOT NULL,
-    email VARCHAR(40),
+    email VARCHAR(100),
     phone VARCHAR(12),
     id_address INTEGER REFERENCES ADDRESSES(id_address)
 );

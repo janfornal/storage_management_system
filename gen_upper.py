@@ -1,28 +1,40 @@
-from random import choice, randint, sample
+# USAGE (assuming you have python3 on your PATH)
+#
+# pip3 install Faker
+# python3 gen_upper.py > gen.sql
+# psql < gen.sql
+
+from random import choice, randint, sample, random
+from collections import defaultdict
 from faker import Faker
+from datetime import datetime, timedelta
 
 def convert(inp) -> str:
     if inp is None:
         return '\\N'
     return str(inp)
 
-def print_tab(lst : list, name : str):
+
+def print_tab(lst: list, name: str) -> None:
     print(f'COPY {name} FROM stdin; ')
     for el in lst:
         print('\t'.join(map(convert, el)))
     print('\\.\n')
 
-def load_product_ids():
+
+def load_products() -> list:
     ids = list()
     for line in open("data/products.csv"):
         try:
             a, comma, b = line.partition(',')
             ids.append(int(a))
         except Exception:
-            pass 
+            pass
+
     return ids
 
-def load_brands():
+
+def load_brands() -> list:
     brands = list()
     for line in open("data/brand.csv"):
         try:
@@ -30,102 +42,139 @@ def load_brands():
             int(a)
             brands.append(b.strip())
         except Exception:
-            pass 
+            pass
 
     return brands
 
-    
+
 def gen_upper():
-    PRODUCT_IDS = load_product_ids()
-    BRANDS = load_brands()
+    PRODUCTS, BRANDS = load_products(), load_brands()
 
-    SUPPLIERS = list()
-    EMPLOYEES = list()
-    DELIVERIES = list()
-    PRODUCTS_DELIVERIES = list()
-    
-    ADDRESSES = list()
-    CLIENTS = list()
+    SUPPLIERS, EMPLOYEES, DELIVERIES, PRODUCTS_DELIVERIES = list(), list(), list(), list()
+    ADDRESSES, CLIENTS, SALES, PRODUCTS_SOLD = list(), list(), list(), list()
+    CLIENTS_RETURN, COMPLAINT, PRODUCTS_PROBLEMS, INTERNET_SALE = list(), list(), list(), list()
 
-    SALES = list()
-    PRODUCTS_SOLD = list()
-    CLIENTS_RETURN = list()
-    COMPLAINT = list()
-    PRODUCTS_PROBLEMS = list()
-    INTERNET_SALE = list()
+    EMPLOYEES_C, ADDRESSES_C, CLIENTS_C = 15, 35, 70
+    SIM_BEGINS, DAYS_TO_SIM, EVENTS_PER_DAY = datetime(2020, 1, 1), 700, range(0, 50)
+    DELIVERY_ENTRIES_C, DELIVERY_PRODUCT_QUANTITY = range(10, 100), range(10, 100)
+    SALE_ENTRIES_C, SALE_PRODUCT_QUANTITY = range(1, 8), range(1, 5)
+    MX_PROD, PROBABILITY_DELIVERY, PROBABILITY_INTERNET = 1000, 0.01, 0.33
 
+    status = defaultdict(int)
     fake = Faker()
 
+    # SUPPLIERS
     for name in BRANDS:
-        rn = randint(1,3)
-        if rn == 0: 
+        rn = randint(1, 3)
+        if rn == 0:
             name += " GLOBAL"
-        if rn == 1: 
+        if rn == 1:
             name += " EUROPE"
-        SUPPLIERS.append((len(SUPPLIERS), name))
+        SUPPLIERS.append((1 + len(SUPPLIERS), name))
 
-    for i in range(50):
-        fname = fake.first_name()
-        lname = fake.last_name()
-        username = lname.lower() + str(randint(1,999))
-        password = randint(0, 2**30)
-        EMPLOYEES.append((i, username, password, fname, lname))
-
-    for i in range(50):
-        date = fake.date_time_between('-5y','-1y');
-        DELIVERIES.append((i, choice(SUPPLIERS)[0], date))
-
-    for id_del, supp, dt in DELIVERIES:
-        for id_prod in sample(PRODUCT_IDS, randint(1, 15)):
-            PRODUCTS_DELIVERIES.append((id_del, id_prod, randint(1,20)*10))
-
-    for i in range(20):
+    # ADDRESSES
+    for i in range(ADDRESSES_C):
         post = fake.postcode()
         city = fake.city()
         street = fake.street_name()
         build = fake.building_number()
-        flat = randint(1,20)
-        ADDRESSES.append((i, post, city, street, build, flat))
+        flat = randint(1, 20)
+        ADDRESSES.append((1 + i, post, city, street, build, flat))
 
-
-    for i in range(50):
+    # EMPLOYEES
+    for i in range(EMPLOYEES_C):
         fname = fake.first_name()
         lname = fake.last_name()
-        username = lname.lower() + str(randint(1,999))
-        password = randint(0, 2**30)
-        email = f'{lname}{choice([".","_",""])}{choice([fname, ""])}{str(randint(1,9999))}@{fake.domain_name()}'
+        username = lname.lower() + str(randint(1, 999))
+        password = randint(0, 2 ** 30)
+        EMPLOYEES.append((1 + i, username, password, fname, lname))
+
+    # CLIENTS
+    for i in range(CLIENTS_C):
+        fname = fake.first_name()
+        lname = fake.last_name()
+        username = lname.lower() + str(randint(1, 999))
+        password = randint(0, 2 ** 30)
+        email = f'{lname}{choice([".", "_", ""])}{choice([fname, ""])}{str(randint(1, 9999))}@{fake.domain_name()}'
         tele = choice([None, f'+48{fake.msisdn()[4:]}'])
         addr = choice(ADDRESSES)[0]
-        CLIENTS.append((i, username, password, fname, lname, email, tele, addr))
-
-    for i in range(50):
-        date = fake.date_time_between('-5y','-1y');
-        SALES.append((i, date))
-
-    #for id_del, dt in SALES:
-    #    for id_prod in sample(PRODUCT_IDS, randint(1, 15)):
-    #        PRODUCTS_SOLD.append((id_del, id_prod, randint(1,20)*10))
+        CLIENTS.append((1 + i, username, password, fname, lname, email, tele, addr))
 
 
+    def try_to_generate_delivery(when: datetime) -> bool:
+        nonlocal DELIVERIES, DELIVERY_PRODUCT_QUANTITY, MX_PROD, DELIVERY_ENTRIES_C, PRODUCTS_DELIVERIES
+
+        del_id = len(DELIVERIES) + 1
+        del_prods = [(del_id, id, choice(DELIVERY_PRODUCT_QUANTITY)) for id in
+                     sample(PRODUCTS, choice(DELIVERY_ENTRIES_C))]
+        del_prods = list(filter(lambda x: status[x[1]] + x[2] < MX_PROD, del_prods))
+
+        if len(del_prods) not in DELIVERY_ENTRIES_C:
+            return False;
+
+        for _, id, q in del_prods:
+            status[id] += q
+
+        DELIVERIES.append((del_id, choice(SUPPLIERS)[0], when))
+        PRODUCTS_DELIVERIES += del_prods
+        return True
+
+
+    def try_to_generate_sale(when: datetime) -> bool:
+        nonlocal SALES, SALE_PRODUCT_QUANTITY, PRODUCTS, SALE_ENTRIES_C, PRODUCTS_SOLD, ADDRESSES
+
+        sale_id = len(SALES) + 1
+        sale_prods = [(sale_id, id, choice(SALE_PRODUCT_QUANTITY)) for id in sample(PRODUCTS, choice(SALE_ENTRIES_C))]
+        sale_prods = list(filter(lambda x: status[x[1]] >= x[2], sale_prods))
+
+        if len(sale_prods) not in SALE_ENTRIES_C:
+            return False
+
+        for _, id, q in sale_prods:
+            status[id] -= q
+
+        SALES.append((sale_id, when))
+        PRODUCTS_SOLD += sale_prods
+
+        if random() < PROBABILITY_INTERNET:
+            INTERNET_SALE.append((sale_id, when + timedelta(days = randint(1, 3)), 'poczta', choice(ADDRESSES)[0]))
+
+        return True
+
+
+    def try_to_generate(when: datetime) -> bool:
+        if random() < PROBABILITY_DELIVERY:
+            return try_to_generate_delivery(when)
+        else:
+            return try_to_generate_sale(when)
+
+    # DELIVERIES, SALES, INTERNET_SALE
+    for event in sorted([fake.date_time_between(SIM_BEGINS, SIM_BEGINS + timedelta(days = DAYS_TO_SIM)) for _ in range(choice(EVENTS_PER_DAY) * DAYS_TO_SIM)]):
+        while not try_to_generate(event):
+            pass
+
+
+    # CLIENTS_RETURN, COMPLAINT, PRODUCTS_PROBLEMS
 
     print('BEGIN;')
+
     print_tab(SUPPLIERS, 'SUPPLIERS (id_supplier, name)')
     print_tab(EMPLOYEES, 'EMPLOYEES (id_employee, login, password, first_name, last_name)')
     print_tab(DELIVERIES, 'DELIVERIES (id_delivery, id_supplier, date_delivery)')
     print_tab(PRODUCTS_DELIVERIES, 'PRODUCTS_DELIVERIES (id_delivery, id_product, quantity)')
-    
+
     print_tab(ADDRESSES, 'ADDRESSES (id_address, postal_code, city, street, building_number, flat_number)')
     print_tab(CLIENTS, 'CLIENTS (id_client, login, password, first_name, last_name, email, phone, id_address)')
-    
     print_tab(SALES, 'SALES (id_sale, sales_date)')
     print_tab(PRODUCTS_SOLD, 'PRODUCTS_SOLD (id_sale, id_product, quantity)')
+
     print_tab(CLIENTS_RETURN, 'CLIENTS_RETURN (id_return, id_sale, id_product, quantity, return_date)')
     print_tab(COMPLAINT, 'COMPLAINT (id_complaint, id_product, id_sale, quantity, complaint_date, complaint_description, result_date, complaint_accepted, id_employee)')
     print_tab(PRODUCTS_PROBLEMS, 'PRODUCTS_PROBLEMS (id_product, quantity, exhibition, returned, problem_description, discount)')
     print_tab(INTERNET_SALE, 'INTERNET_SALE (id_sale, date_delivery, method_delivery, id_address)')
+
     print('COMMIT;')
 
-    # gen_upper END
 
 if __name__ == '__main__':
     gen_upper()
