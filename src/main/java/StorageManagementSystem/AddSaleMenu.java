@@ -98,4 +98,17 @@ public class AddSaleMenu {
         });
         nameComboBox.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getProductsFromCategoryName(nameOfCategory[0])));
     }
+
+    public CategoryRecord categoryBoxItem() {
+        return categoryComboBox.getValue();
+    }
+
+    public ProductRepr productBoxItem() {
+        return nameComboBox.getValue();
+    }
+
+    public Double amountFieldItem() {    // TODO dodaj jakiś exception
+        if(selectAmountArea.getText() == null) return null;
+        return Double.parseDouble(selectAmountArea.getText());
+    }
 }
