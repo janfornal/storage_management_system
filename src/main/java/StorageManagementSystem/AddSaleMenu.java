@@ -111,4 +111,12 @@ public class AddSaleMenu {
         if(selectAmountArea.getText() == null) return null;
         return Double.parseDouble(selectAmountArea.getText());
     }
+
+    public void setNetPriceLabel(Double price) {
+        this.netPriceLabel.setText("Net price: " + price);
+    }
+
+    public void setWholePriceLabel(Double price) {
+        this.wholePriceLabel.setText("Whole price: " + price);
+    }
 }

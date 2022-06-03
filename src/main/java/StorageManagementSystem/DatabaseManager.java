@@ -205,6 +205,15 @@ public class DatabaseManager {
         }
     }
 
+    public ResultSet queryAnything(String statement) throws SQLException {
+        PreparedStatement st = conn.prepareStatement(statement);
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            st.close();
+            return rs;
+        }
+    }
+
     public Double getPriceOfProductFromId(int w) {
         try {
             getPriceOfProductFromId.setInt(1, w);
