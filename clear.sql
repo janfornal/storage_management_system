@@ -23,12 +23,12 @@ DROP TABLE IF EXISTS BRAND               CASCADE;
 
 
 
-DROP FUNCTION IF EXISTS returned_check()                        CASCADE;
-DROP FUNCTION IF EXISTS allowed_param_check()                   CASCADE;
-DROP FUNCTION IF EXISTS check_insert_products_sold()            CASCADE;
-DROP FUNCTION IF EXISTS check_delete_products_sold()            CASCADE;
-DROP FUNCTION IF EXISTS update_increase_store_status_2()        CASCADE;
-DROP FUNCTION IF EXISTS insert_id_products_to_store_status()    CASCADE;
+DROP FUNCTION IF EXISTS returned_check                          CASCADE;
+DROP FUNCTION IF EXISTS allowed_param_check                     CASCADE;
+DROP FUNCTION IF EXISTS check_insert_products_sold              CASCADE;
+DROP FUNCTION IF EXISTS check_delete_products_sold              CASCADE;
+DROP FUNCTION IF EXISTS update_increase_store_status            CASCADE;
+DROP FUNCTION IF EXISTS insert_id_products_to_store_status      CASCADE;
 
 
 DROP FUNCTION IF EXISTS nice_repr_of_products                   CASCADE;
