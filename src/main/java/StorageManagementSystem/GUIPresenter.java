@@ -14,7 +14,7 @@ public class GUIPresenter extends Application {
     public static DatabaseManager databaseManager;
     public static String login;
     public static ProductsTableMenu menuController;
-    public static FunctonalityWindow functionalityController;
+    public static FunctionalityWindow functionalityController;
     private static Stage enterStage;
     private static Stage currentStage;
     private static Stage functionalityStage;
@@ -68,7 +68,7 @@ public class GUIPresenter extends Application {
             FXMLLoader loader = new FXMLLoader();
             val.setLocation(loader);
             Parent root = loader.load();
-            functionalityController = (FunctonalityWindow) val.getController(loader);
+            functionalityController = (FunctionalityWindow) val.getController(loader);
             Scene scene1 = new Scene(root);
             functionalityStage = new Stage();
             functionalityStage.setScene(scene1);

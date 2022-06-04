@@ -2,14 +2,13 @@ package StorageManagementSystem;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 
 import java.sql.SQLException;
 
-public class AddSaleWindow implements FunctonalityWindow {
+public class AddSaleWindow implements FunctionalityWindow {
 
     public int idOfSale;
 
@@ -17,7 +16,7 @@ public class AddSaleWindow implements FunctonalityWindow {
     private AddSaleMenu addSaleMenuController;
 
     @FXML
-    private FlattenedProductAnchor flattenedProductAnchorController;
+    private FlattenedProductAnchor2 flattenedProductAnchor2Controller;
 
     @FXML
     private Button addProductButton;
@@ -53,8 +52,8 @@ public class AddSaleWindow implements FunctonalityWindow {
             GUIPresenter.databaseManager.addNewSaleProduct(idOfSale, asm.productBoxItem().id(), asm.amountFieldItem());
             addSaleMenuController.setNetPriceLabel(GUIPresenter.databaseManager.getPriceOfProductFromSale(idOfSale));
             addSaleMenuController.setWholePriceLabel(GUIPresenter.databaseManager.getGrossOfProductFromSale(idOfSale));
-            ProductRepr modifiedRepr = new ProductRepr(asm.productBoxItem().id(), asm.productBoxItem().brand(), asm.productBoxItem().name(), asm.productBoxItem().category(), asm.amountFieldItem(), asm.productBoxItem().netPrice());
-            flattenedProductAnchorController.add(modifiedRepr);
+            UsedProductRepr modifiedRepr = new UsedProductRepr(asm.productBoxItem().id(), asm.productBoxItem().brand(), asm.productBoxItem().name(), asm.productBoxItem().category(), null, asm.amountFieldItem(), asm.productBoxItem().netPrice());
+            flattenedProductAnchor2Controller.add(modifiedRepr);
         } catch (SQLException e) {
             Platform.runLater(
                     () -> new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait()

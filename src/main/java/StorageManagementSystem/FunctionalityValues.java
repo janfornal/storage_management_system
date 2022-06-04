@@ -19,7 +19,7 @@ public enum FunctionalityValues implements FXMLManager {
     RETURN() {
         @Override
         public void setLocation(FXMLLoader loader) {
-//            loader.setLocation(GUIPresenter.class.getResource("/addReturnWindow.fxml"));
+            loader.setLocation(GUIPresenter.class.getResource("/returnWindow.fxml"));
         }
     }
 }

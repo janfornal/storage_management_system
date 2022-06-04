@@ -9,7 +9,7 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
-public class AddDeliveryWindow implements FunctonalityWindow {
+public class AddDeliveryWindow implements FunctionalityWindow {
 
     @FXML
     private AddDeliveryMenu addDeliveryMenuController;

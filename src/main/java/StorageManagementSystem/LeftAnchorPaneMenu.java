@@ -36,5 +36,9 @@ public class LeftAnchorPaneMenu {
     public void provideDeliveryWindow(javafx.event.ActionEvent actionEvent) {
         GUIPresenter.enterFunctionalityWindow(FunctionalityValues.DELIVERY);
     }
+
+    public void provideReturnWindow(javafx.event.ActionEvent actionEvent) {
+        GUIPresenter.enterFunctionalityWindow(FunctionalityValues.RETURN);
+    }
 }
 

@@ -27,6 +27,7 @@ public class DatabaseManager {
     private PreparedStatement getProductNameFromId, getIdFromProductName;
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId, getProductsFromCategoryName;
     private PreparedStatement getAllCategories;
+    private PreparedStatement getAllSales;
     private PreparedStatement getProductPropertiesFromId;
     private PreparedStatement addNewDelivery, addNewDeliveryProduct;
     private PreparedStatement addNewSale, addNewSaleProduct;
@@ -48,6 +49,7 @@ public class DatabaseManager {
             getProductsNameFromCategoryId.close();
             getProductsFromCategoryName.close();
             getAllCategories.close();
+            getAllSales.close();
             getProductPropertiesFromId.close();
             addNewDelivery.close();
             addNewDeliveryProduct.close();
@@ -69,6 +71,7 @@ public class DatabaseManager {
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = getProductsFromCategoryName = null;
             getAllCategories = null;
+            getAllSales = null;
             getProductPropertiesFromId = null;
             addNewDelivery = addNewDeliveryProduct = null;
             addNewSale = addNewSaleProduct = null;
@@ -99,6 +102,8 @@ public class DatabaseManager {
             getProductsFromCategoryName = conn.prepareStatement("SELECT * FROM nice_repr_of_products() WHERE category = ?");
 
             getAllCategories = conn.prepareStatement("SELECT * FROM CATEGORIES");
+
+            getAllSales = conn.prepareStatement("SELECT * FROM SALES");
 
             getProductPropertiesFromId = conn.prepareStatement("SELECT " +
                     "(SELECT name FROM parameters WHERE parameters.id_parameter = pp.id_parameter), " +
@@ -213,6 +218,18 @@ public class DatabaseManager {
             ArrayList<CategoryRecord> returnList = new ArrayList<>();
             while(rs.next()) {
                 returnList.add(new CategoryRecord(rs.getInt(1), rs.getString(2)));
+            }
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            return returnList;
+        }
+    }
+
+    private ArrayList<SaleRepr> querySaleList(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            ArrayList<SaleRepr> returnList = new ArrayList<>();
+            while(rs.next()) {
+                returnList.add(new SaleRepr(rs.getInt(1), rs.getDate(2)));
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
             return returnList;
@@ -360,6 +377,14 @@ public class DatabaseManager {
     public ArrayList<CategoryRecord> getAllCategories() {
         try {
             return queryCategoryList(getAllCategories);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<SaleRepr> getAllSales() {
+        try {
+            return querySaleList(getAllSales);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
