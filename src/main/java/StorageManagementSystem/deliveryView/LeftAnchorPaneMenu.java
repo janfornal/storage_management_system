@@ -1,10 +1,10 @@
-package StorageManagementSystem;
+package StorageManagementSystem.deliveryView;
 
+import StorageManagementSystem.fxmlAssistants.FunctionalityValues;
+import StorageManagementSystem.GUIPresenter;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-
-import java.awt.event.ActionEvent;
 
 public class LeftAnchorPaneMenu {
 

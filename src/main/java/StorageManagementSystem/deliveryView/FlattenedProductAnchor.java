@@ -1,17 +1,17 @@
-package StorageManagementSystem;
+package StorageManagementSystem.deliveryView;
 
+import StorageManagementSystem.records.ProductRepr;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
 
 import java.util.ArrayList;
 
-public class ProductAnchor {
+public class FlattenedProductAnchor {
+
+    private ArrayList<ProductRepr> observedArray;
 
     @FXML
     private TableColumn<ProductRepr, Double> amountColumn;
@@ -60,25 +60,15 @@ public class ProductAnchor {
                 g -> new ReadOnlyObjectWrapper<Double>(g.getValue().netPrice())
         );
 
-        actualizeList();
-
-        productTableView.setRowFactory(tv -> {
-            TableRow<ProductRepr> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    ArrayList<String> returnedArray = GUIPresenter.databaseManager.getProductPropertiesFromId(row.getItem().id());
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Product properties");
-                    alert.setTitle(row.getItem().brand() + " " + row.getItem().name());   // maybe use appropriately overriden toString
-                    alert.setContentText(returnedArray.stream().reduce("", (first, second) -> first + " \n" + second));
-
-                    alert.showAndWait();
-                }
-            });
-            return row;
-        });
+        observedArray = new ArrayList<ProductRepr>();
     }
 
-    public void actualizeList() {
-        productTableView.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getTableOfProducts()));
+    public void add(ProductRepr productRepr) {
+        observedArray.add(productRepr);
+        productTableView.setItems(FXCollections.observableArrayList(observedArray));
+    }
+
+    public ArrayList<ProductRepr> getObservedArray() {
+        return observedArray;
     }
 }

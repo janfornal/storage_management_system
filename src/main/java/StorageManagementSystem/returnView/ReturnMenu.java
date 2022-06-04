@@ -1,5 +1,7 @@
-package StorageManagementSystem;
+package StorageManagementSystem.returnView;
 
+import StorageManagementSystem.GUIPresenter;
+import StorageManagementSystem.records.SaleRepr;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;

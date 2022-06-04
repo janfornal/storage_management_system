@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.ReturnMenu">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.returnView.ReturnMenu">
    <children>
       <Label fx:id="chosenProductLabel" alignment="TOP_LEFT" layoutX="25.0" layoutY="25.0" prefHeight="35.0" prefWidth="250.0" text="Chosen product" />
       <ComboBox fx:id="saleComboBox" layoutX="25.0" layoutY="70.0" prefHeight="26.0" prefWidth="250.0" promptText="Select sale" />

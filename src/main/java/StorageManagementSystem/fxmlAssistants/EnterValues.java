@@ -1,5 +1,7 @@
-package StorageManagementSystem;
+package StorageManagementSystem.fxmlAssistants;
 
+import StorageManagementSystem.GUIPresenter;
+import StorageManagementSystem.fxmlAssistants.FXMLManager;
 import javafx.fxml.FXMLLoader;
 
 public enum EnterValues implements FXMLManager {

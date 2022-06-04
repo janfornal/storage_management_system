@@ -1,16 +1,18 @@
-package StorageManagementSystem;
+package StorageManagementSystem.menuView;
 
+import StorageManagementSystem.GUIPresenter;
+import StorageManagementSystem.records.ProductRepr;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 
 import java.util.ArrayList;
 
-public class FlattenedProductAnchor {
-
-    private ArrayList<ProductRepr> observedArray;
+public class ProductAnchor {
 
     @FXML
     private TableColumn<ProductRepr, Double> amountColumn;
@@ -59,15 +61,25 @@ public class FlattenedProductAnchor {
                 g -> new ReadOnlyObjectWrapper<Double>(g.getValue().netPrice())
         );
 
-        observedArray = new ArrayList<ProductRepr>();
+        actualizeList();
+
+        productTableView.setRowFactory(tv -> {
+            TableRow<ProductRepr> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    ArrayList<String> returnedArray = GUIPresenter.databaseManager.getProductPropertiesFromId(row.getItem().id());
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION, "Product properties");
+                    alert.setTitle(row.getItem().brand() + " " + row.getItem().name());   // maybe use appropriately overriden toString
+                    alert.setContentText(returnedArray.stream().reduce("", (first, second) -> first + " \n" + second));
+
+                    alert.showAndWait();
+                }
+            });
+            return row;
+        });
     }
 
-    public void add(ProductRepr productRepr) {
-        observedArray.add(productRepr);
-        productTableView.setItems(FXCollections.observableArrayList(observedArray));
-    }
-
-    public ArrayList<ProductRepr> getObservedArray() {
-        return observedArray;
+    public void actualizeList() {
+        productTableView.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getTableOfProducts()));
     }
 }

@@ -1,5 +1,6 @@
-package StorageManagementSystem;
+package StorageManagementSystem.returnView;
 
+import StorageManagementSystem.fxmlAssistants.FunctionalityWindow;
 import javafx.fxml.FXML;
 
 public class ReturnWindow implements FunctionalityWindow {

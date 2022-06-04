@@ -1,4 +1,4 @@
-package StorageManagementSystem;
+package StorageManagementSystem.fxmlAssistants;
 
 import javafx.fxml.FXMLLoader;
 

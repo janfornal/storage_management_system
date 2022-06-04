@@ -1,5 +1,8 @@
-package StorageManagementSystem;
+package StorageManagementSystem.saleView;
 
+import StorageManagementSystem.fxmlAssistants.FunctionalityWindow;
+import StorageManagementSystem.GUIPresenter;
+import StorageManagementSystem.records.UsedProductRepr;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

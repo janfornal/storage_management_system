@@ -1,4 +1,4 @@
-package StorageManagementSystem;
+package StorageManagementSystem.records;
 
 import java.util.Date;
 

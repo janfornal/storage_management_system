@@ -1,5 +1,9 @@
 package StorageManagementSystem;
 
+import StorageManagementSystem.records.CategoryRecord;
+import StorageManagementSystem.records.ProductRepr;
+import StorageManagementSystem.records.SaleRepr;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.function.Supplier;

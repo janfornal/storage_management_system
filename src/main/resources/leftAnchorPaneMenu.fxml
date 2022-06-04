@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="leftAnchorPaneMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.LeftAnchorPaneMenu">
+<AnchorPane fx:id="leftAnchorPaneMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.deliveryView.LeftAnchorPaneMenu">
    <children>
       <Button fx:id="deliveryButton" layoutX="20.0" layoutY="25.0" mnemonicParsing="false" onAction="#provideDeliveryWindow" prefHeight="26.0" prefWidth="110.0" text="New delivery" />
       <Button fx:id="saleButton" layoutX="20.0" layoutY="65.0" mnemonicParsing="false" onAction="#provideSaleWindow" prefHeight="26.0" prefWidth="110.0" text="Sale" />

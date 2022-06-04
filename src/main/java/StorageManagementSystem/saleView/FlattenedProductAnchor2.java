@@ -1,5 +1,6 @@
-package StorageManagementSystem;
+package StorageManagementSystem.saleView;
 
+import StorageManagementSystem.records.UsedProductRepr;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;

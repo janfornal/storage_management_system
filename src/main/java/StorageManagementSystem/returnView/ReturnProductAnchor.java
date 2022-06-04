@@ -1,5 +1,6 @@
-package StorageManagementSystem;
+package StorageManagementSystem.returnView;
 
+import StorageManagementSystem.records.ReturnProductRepr;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;

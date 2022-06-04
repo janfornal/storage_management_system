@@ -1,5 +1,10 @@
 package StorageManagementSystem;
 
+import StorageManagementSystem.fxmlAssistants.EnterValues;
+import StorageManagementSystem.fxmlAssistants.FunctionalityValues;
+import StorageManagementSystem.fxmlAssistants.FunctionalityWindow;
+import StorageManagementSystem.menuView.ProductsTableMenu;
+import StorageManagementSystem.saleView.AddSaleWindow;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;

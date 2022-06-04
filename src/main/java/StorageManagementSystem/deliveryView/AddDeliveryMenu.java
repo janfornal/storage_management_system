@@ -1,5 +1,8 @@
-package StorageManagementSystem;
+package StorageManagementSystem.deliveryView;
 
+import StorageManagementSystem.records.CategoryRecord;
+import StorageManagementSystem.GUIPresenter;
+import StorageManagementSystem.records.ProductRepr;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
