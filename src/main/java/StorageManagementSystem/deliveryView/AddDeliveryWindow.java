@@ -47,9 +47,15 @@ public class AddDeliveryWindow implements FunctionalityWindow {
     }
 
     public void addDeliveryTransaction(ActionEvent actionEvent) {
+        if(addDeliveryMenuController.supplierBoxItem() == null) {
+            Platform.runLater(
+                    () -> new Alert(Alert.AlertType.ERROR, "Please provide name of supplier").showAndWait()
+            );
+            return;
+        }
         List<Integer> idList = flattenedProductAnchorController.getObservedArray().stream().map(t -> t.id()).toList();
         List<Double> amountList = flattenedProductAnchorController.getObservedArray().stream().map(t -> t.amount()).toList();
-        int id_delivery = GUIPresenter.databaseManager.addNewDelivery(1, new java.sql.Date(System.currentTimeMillis()));  // TODO - id_supplier from checkbox
+        int id_delivery = GUIPresenter.databaseManager.addNewDelivery(addDeliveryMenuController.supplierBoxItem().id(), new java.sql.Date(System.currentTimeMillis()));
         for(int i=0; i<idList.size(); i++) {
             GUIPresenter.databaseManager.addNewDeliveryProduct(id_delivery, idList.get(i), amountList.get(i));
         }

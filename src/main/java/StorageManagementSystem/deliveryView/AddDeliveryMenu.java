@@ -3,6 +3,7 @@ package StorageManagementSystem.deliveryView;
 import StorageManagementSystem.records.CategoryRecord;
 import StorageManagementSystem.GUIPresenter;
 import StorageManagementSystem.records.ProductRepr;
+import StorageManagementSystem.records.SupplierRecord;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,7 +22,7 @@ public class AddDeliveryMenu {
     private TextField selectAmountArea;
 
     @FXML
-    private ComboBox<?> supplierComboBox;
+    private ComboBox<SupplierRecord> supplierComboBox;
 
     @FXML
     void initialize() {
@@ -73,6 +74,36 @@ public class AddDeliveryMenu {
                 }
             }
         });
+        supplierComboBox.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getAllSuppliers()));
+        Callback<ListView<SupplierRecord>, ListCell<SupplierRecord>> supplierCellFactory = new Callback<>() {
+            @Override
+            public ListCell<SupplierRecord> call(ListView<SupplierRecord> l) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(SupplierRecord item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            setText(item.id() + ": " + item.name());
+                        }
+                    }
+                };
+            }
+        };
+        supplierComboBox.setCellFactory(supplierCellFactory);
+        supplierComboBox.setVisibleRowCount(10);
+        supplierComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(SupplierRecord item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setGraphic(null);
+                } else {
+                    setText(item.id() + ": " + item.name());
+                }
+            }
+        });
     }
 
     public void chosenCategoryHandler(ActionEvent actionEvent) {
@@ -98,6 +129,10 @@ public class AddDeliveryMenu {
 
     public ProductRepr productBoxItem() {
         return nameComboBox.getValue();
+    }
+
+    public SupplierRecord supplierBoxItem() {
+        return supplierComboBox.getValue();
     }
 
     public Double amountFieldItem() {    // TODO dodaj jakiś exception
