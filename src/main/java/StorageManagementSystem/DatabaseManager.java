@@ -39,6 +39,8 @@ public class DatabaseManager {
     private PreparedStatement getTableOfProducts;
     private PreparedStatement registerNewEmployee;
 
+    private PreparedStatement addNewComplaint, solveComplaint;
+
     public void close() {
         if (conn == null)
             return;
@@ -68,6 +70,8 @@ public class DatabaseManager {
             getSurname.close();
             getTableOfProducts.close();
             registerNewEmployee.close();
+            addNewComplaint.close();
+            solveComplaint.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -85,6 +89,7 @@ public class DatabaseManager {
             checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
             getTableOfProducts = null;
             registerNewEmployee = null;
+            addNewComplaint = solveComplaint = null;
         }
     }
 
@@ -133,6 +138,8 @@ public class DatabaseManager {
             getTableOfProducts = conn.prepareStatement("SELECT * FROM nice_repr_of_products()");
 
             registerNewEmployee = conn.prepareStatement("INSERT INTO employees (\"login\", \"password\", first_name, last_name) VALUES (?, ?, ?, ?)");
+            addNewComplaint = conn.prepareStatement("INSERT INTO complaint (id_product, id_sale, quantity, complaint_date, complaint_description)VALUES(?, ?, ?, ?, ?, null, null, null)");
+            //solveComplaint = conn.prepareStatement("UPDATE complaint SET ");//TODO
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -489,5 +496,18 @@ public class DatabaseManager {
         }
     }
 
+    public void addComplaint(int id_product,int id_sale,int quantity,Date data,String description){
+        try{
+            addNewComplaint.setInt(1,id_product);
+            addNewComplaint.setInt(2,id_sale);
+            addNewComplaint.setInt(3,quantity);
+            addNewComplaint.setDate(4,data);
+            addNewComplaint.setString(5,description);
+            update(addNewComplaint);
+        }
+        catch (SQLException e){
+            throw new IllegalStateException();
+        }
+    }
 }
 

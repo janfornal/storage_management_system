@@ -10,11 +10,11 @@
         <columns>
           <TableColumn fx:id="idColumn" prefWidth="40.79998588562012" text="Id" />
           <TableColumn fx:id="brandColumn" prefWidth="85.60000610351562" text="Brand" />
-            <TableColumn fx:id="nameColumn" prefWidth="240.00001525878906" text="Name" />
-            <TableColumn fx:id="categoryColumn" minWidth="0.0" prefWidth="137.60003662109375" text="Category" />
-            <TableColumn fx:id="usedColumn" prefWidth="43.20001220703125" text="Used" />
-            <TableColumn fx:id="amountColumn" minWidth="0.0" prefWidth="82.40008544921875" text="Amount" />
-            <TableColumn fx:id="priceColumn" minWidth="0.0" prefWidth="78.39990234375" text="Net_price" />
+            <TableColumn fx:id="nameColumn" prefWidth="229.59999084472656" text="Name" />
+            <TableColumn fx:id="categoryColumn" minWidth="0.0" prefWidth="121.5999755859375" text="Category" />
+            <TableColumn fx:id="usedColumn" prefWidth="40.79998779296875" text="Used" />
+            <TableColumn fx:id="amountColumn" minWidth="0.0" prefWidth="85.60009765625" text="Amount" />
+            <TableColumn fx:id="priceColumn" minWidth="0.0" prefWidth="108.79986572265625" text="Net_price" />
         </columns>
       </TableView>
    </children>

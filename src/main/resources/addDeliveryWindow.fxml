@@ -10,8 +10,8 @@
       <fx:include fx:id="flattenedProductAnchor" source="flattenedProductAnchor.fxml" />
       <AnchorPane prefHeight="50.0" prefWidth="750.0">
          <children>
-            <Button fx:id="addProductButton" layoutX="500.0" layoutY="1.0" mnemonicParsing="false" onAction="#addProductToList" prefHeight="26.0" prefWidth="99.0" text="Add product" />
-            <Button fx:id="addDeliveryButton" layoutX="625.0" mnemonicParsing="false" onAction="#addDeliveryTransaction" prefHeight="26.0" prefWidth="99.0" text="Add delivery" />
+            <Button fx:id="addProductButton" layoutX="500.0" layoutY="1.0" mnemonicParsing="false" onAction="#addProductToList" prefHeight="26.0" prefWidth="99.0" style="-fx-background-color: LIGHTBLUE;" text="Add product" />
+            <Button fx:id="addDeliveryButton" layoutX="625.0" mnemonicParsing="false" onAction="#addDeliveryTransaction" prefHeight="26.0" prefWidth="99.0" style="-fx-background-color: LIGHTBLUE;" text="Add delivery" />
          </children>
       </AnchorPane>
    </children>

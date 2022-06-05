@@ -22,6 +22,9 @@ public class ReturnMenu {
     private TextArea descriptionTextArea;
 
     @FXML
+    private TextField amountTextField;
+
+    @FXML
     private Button productsProblemsButton;
 
     @FXML
@@ -48,6 +51,21 @@ public class ReturnMenu {
         };
         saleComboBox.setCellFactory(cellFactory);
         saleComboBox.setVisibleRowCount(10);
+    }
+
+    public TextArea descriptionTextArea(){
+        return descriptionTextArea;
+    }
+
+    public SaleRepr saleComboBox(){
+        return saleComboBox.getValue();
+    }
+
+    public Double amountTextField(){
+        if(amountTextField == null) {
+            return null;
+        }
+        return Double.parseDouble(amountTextField.getText());
     }
 
 }
