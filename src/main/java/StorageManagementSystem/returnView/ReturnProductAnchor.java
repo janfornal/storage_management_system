@@ -1,7 +1,9 @@
 package StorageManagementSystem.returnView;
 
+import StorageManagementSystem.GUIPresenter;
 import StorageManagementSystem.records.ReturnProductRepr;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -9,8 +11,6 @@ import javafx.scene.control.TableView;
 import java.util.ArrayList;
 
 public class ReturnProductAnchor {
-
-    private ArrayList<ReturnProductRepr> observedArray = new ArrayList<>();
 
     @FXML
     private TableColumn<ReturnProductRepr, Double> amountColumn;
@@ -20,9 +20,6 @@ public class ReturnProductAnchor {
 
     @FXML
     private TableColumn<ReturnProductRepr, String> nameColumn;
-
-    @FXML
-    private TableColumn<ReturnProductRepr, Integer> usedColumn;
 
     @FXML
     private TableView<ReturnProductRepr> productTableView;
@@ -41,10 +38,13 @@ public class ReturnProductAnchor {
                 g -> new ReadOnlyObjectWrapper<String>(g.getValue().name())
         );
 
-        usedColumn.setCellValueFactory(
-                g -> new ReadOnlyObjectWrapper<Integer>(g.getValue().used())
-        );
+    }
 
-        observedArray = new ArrayList<>();
+    public void actualizeList(int s) {
+        productTableView.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getProductsFromSale(s)));
+    }
+
+    public ReturnProductRepr selectedItem() {
+        return productTableView.getSelectionModel().getSelectedItem();
     }
 }

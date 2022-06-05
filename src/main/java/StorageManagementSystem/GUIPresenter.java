@@ -94,6 +94,7 @@ public class GUIPresenter extends Application {
     public static void closeFunctionalityStage() {    //zawsze przy zamknięciu okienka np. przy zatwierdzeniu transakcji
         functionalityStage.close();
         functionalityStage = null;
+        functionalityController = null;
         GUIPresenter.menuController.actualizeList();
     }
 }

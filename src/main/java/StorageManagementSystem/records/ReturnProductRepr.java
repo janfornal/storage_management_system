@@ -1,4 +1,4 @@
 package StorageManagementSystem.records;
 
-public record ReturnProductRepr(int id, String name, Integer used, double amount) {
+public record ReturnProductRepr(int id, String name, double amount) {
 }

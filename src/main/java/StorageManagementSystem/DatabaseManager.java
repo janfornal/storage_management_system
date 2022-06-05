@@ -28,6 +28,7 @@ public class DatabaseManager {
     private PreparedStatement getPriceOfProductFromSale, getGrossOfProductFromSale;
     private PreparedStatement getProductNameFromId, getIdFromProductName;
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId, getProductsFromCategoryName;
+    private PreparedStatement getProductsFromSale;
     private PreparedStatement getProductsWithProblems;
     private PreparedStatement getAllCategories;
     private PreparedStatement getAllSales;
@@ -35,6 +36,7 @@ public class DatabaseManager {
     private PreparedStatement getProductPropertiesFromId;
     private PreparedStatement addNewDelivery, addNewDeliveryProduct;
     private PreparedStatement addNewSale, addNewSaleProduct, addNewSaleProductProblem;
+    private PreparedStatement addNewReturn;
     private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname;
     private PreparedStatement getTableOfProducts;
     private PreparedStatement registerNewEmployee;
@@ -52,6 +54,7 @@ public class DatabaseManager {
             getProductsIdFromCategoryId.close();
             getProductsNameFromCategoryId.close();
             getProductsFromCategoryName.close();
+            getProductsFromSale.close();
             getProductsWithProblems.close();
             getAllCategories.close();
             getAllSales.close();
@@ -62,6 +65,7 @@ public class DatabaseManager {
             addNewSale.close();
             addNewSaleProduct.close();
             addNewSaleProductProblem.close();
+            addNewReturn.close();
             checkLoginExist.close();
             checkPasswordCorrect.close();
             getFirstName.close();
@@ -77,11 +81,13 @@ public class DatabaseManager {
             getPriceOfProductFromSale = getGrossOfProductFromSale = null;
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = getProductsFromCategoryName = null;
+            getProductsFromSale = null;
             getProductsWithProblems = null;
             getAllCategories = getAllSales = getAllSuppliers = null;
             getProductPropertiesFromId = null;
             addNewDelivery = addNewDeliveryProduct = null;
             addNewSale = addNewSaleProduct = addNewSaleProductProblem = null;
+            addNewReturn = null;
             checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
             getTableOfProducts = null;
             registerNewEmployee = null;
@@ -108,6 +114,8 @@ public class DatabaseManager {
             getProductsNameFromCategoryId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id_category = ?");
             getProductsFromCategoryName = conn.prepareStatement("SELECT * FROM nice_repr_of_products() WHERE category = ?");
 
+            getProductsFromSale = conn.prepareStatement("SELECT * FROM sale_product_info(?)");
+
             getProductsWithProblems = conn.prepareStatement("SELECT * FROM repr_of_products_problems(?)");
 
             getAllCategories = conn.prepareStatement("SELECT * FROM CATEGORIES");
@@ -124,6 +132,8 @@ public class DatabaseManager {
             addNewSale = conn.prepareStatement("INSERT INTO sales (sales_date) VALUES (?) RETURNING id_sale");
             addNewSaleProduct = conn.prepareStatement("INSERT INTO products_sold (id_sale, id_product, quantity) VALUES (?, ?, ?)");
             addNewSaleProductProblem = conn.prepareStatement("INSERT INTO products_problems_sold (id_sale, id_product_with_problem, quantity) VALUES (?, ?, ?)");
+
+            addNewReturn = conn.prepareStatement("INSERT INTO clients_return (id_sale, id_product, quantity, return_date) VALUES (?, ?, ?, ?)");
 
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
             checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
@@ -239,7 +249,7 @@ public class DatabaseManager {
             Service.DB_QUERY_CALL_STREAM.println(st);
             ArrayList<SaleRepr> returnList = new ArrayList<>();
             while(rs.next()) {
-                returnList.add(new SaleRepr(rs.getInt(1), rs.getDate(2)));
+                returnList.add(new SaleRepr(rs.getInt(1), rs.getTimestamp(2)));
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
             return returnList;
@@ -264,6 +274,18 @@ public class DatabaseManager {
             ArrayList<ProductWithProblemRepr> returnList = new ArrayList<>();
             while(rs.next()) {
                 returnList.add(new ProductWithProblemRepr(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4)));
+            }
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            return returnList;
+        }
+    }
+
+    private ArrayList<ReturnProductRepr> queryReturnProductList(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            ArrayList<ReturnProductRepr> returnList = new ArrayList<>();
+            while(rs.next()) {
+                returnList.add(new ReturnProductRepr(rs.getInt(1), rs.getString(2), rs.getDouble(3)));
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
             return returnList;
@@ -340,6 +362,18 @@ public class DatabaseManager {
             addNewDeliveryProduct.setInt(2, id_product);
             addNewDeliveryProduct.setDouble(3, quantity);
             update(addNewDeliveryProduct);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addNewReturn(int id_sale, int id_product, double quantity) {
+        try {
+            addNewReturn.setInt(1, id_sale);
+            addNewReturn.setInt(2, id_product);
+            addNewReturn.setDouble(3, quantity);
+            addNewReturn.setTimestamp(4, new java.sql.Timestamp(System.currentTimeMillis()));
+            update(addNewReturn);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -441,6 +475,15 @@ public class DatabaseManager {
         }
     }
 
+    public ArrayList<ReturnProductRepr> getProductsFromSale(int i) {
+        try {
+            getProductsFromSale.setInt(1, i);
+            return queryReturnProductList(getProductsFromSale);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void registerNewEmployee(String login, String password, String first_name, String last_name) {
         try {
             registerNewEmployee.setString(1, login);
@@ -457,9 +500,9 @@ public class DatabaseManager {
         return updateOnce(conn.prepareStatement(orderList));
     }
 
-    public int addNewSale(Date data) {
+    public int addNewSale(Timestamp data) {
         try {
-            addNewSale.setDate(1, data);
+            addNewSale.setTimestamp(1, data);
             return queryInteger(addNewSale);
         } catch (SQLException e) {
             throw new RuntimeException(e);

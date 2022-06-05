@@ -4,15 +4,13 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.returnView.ReturnProductAnchor">
    <children>
       <TableView fx:id="productTableView" layoutX="25.0" layoutY="25.0" prefHeight="400.0" prefWidth="400.0">
         <columns>
           <TableColumn fx:id="idColumn" prefWidth="36.79998779296875" text="Id" />
-          <TableColumn fx:id="nameColumn" prefWidth="240.79997634887695" text="Name" />
-            <TableColumn fx:id="usedColumn" prefWidth="48.0" text="Used" />
-            <TableColumn fx:id="amountColumn" prefWidth="75.19999694824219" text="Amount" />
+          <TableColumn fx:id="nameColumn" prefWidth="268.79997634887695" text="Name" />
+            <TableColumn fx:id="amountColumn" prefWidth="95.20001220703125" text="Amount" />
         </columns>
       </TableView>
    </children>

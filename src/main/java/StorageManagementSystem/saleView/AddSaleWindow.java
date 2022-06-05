@@ -29,7 +29,7 @@ public class AddSaleWindow implements FunctionalityWindow {
 
     @FXML
     void initialize() {
-        idOfSale = GUIPresenter.databaseManager.addNewSale(new java.sql.Date(System.currentTimeMillis()));
+        idOfSale = GUIPresenter.databaseManager.addNewSale(new java.sql.Timestamp(System.currentTimeMillis()));
 
     }
 

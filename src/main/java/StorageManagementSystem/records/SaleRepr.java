@@ -1,6 +1,6 @@
 package StorageManagementSystem.records;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
-public record SaleRepr(int id_sale, Date data) {
+public record SaleRepr(int id_sale, Timestamp data) {
 }
