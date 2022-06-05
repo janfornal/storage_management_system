@@ -62,7 +62,7 @@ public class AddSaleWindow implements FunctionalityWindow {
                     asm.productBoxItem().category(),
                     (asm.productProblemBoxItem() == null) ? null : asm.productProblemBoxItem().id_product(),
                     asm.amountFieldItem(),
-                    (asm.productProblemBoxItem() == null) ? null : asm.productProblemBoxItem().price());
+                    (asm.productProblemBoxItem() == null) ? asm.productBoxItem().netPrice() : asm.productProblemBoxItem().price());
             flattenedProductAnchor2Controller.add(modifiedRepr);
         } catch (IllegalStateException e) {
             Platform.runLater(
