@@ -62,6 +62,15 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION get_price_problem(id_problem INTEGER, t TIMESTAMP)
+    RETURNS numeric(8, 2) AS
+$$
+BEGIN
+    RETURN (SELECT ROUND(get_price(id_product, t)*(100 - discount)/100.0, 2)
+            FROM products_problems WHERE id_product_with_problem = id_problem);
+END;
+$$ LANGUAGE 'plpgsql';
+
 CREATE OR REPLACE FUNCTION get_vat(id_arg INTEGER, t TIMESTAMP)
     RETURNS integer AS
 $$
@@ -82,12 +91,25 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
+
+CREATE OR REPLACE FUNCTION get_gross_price_time_problem(id_problem INTEGER, t TIMESTAMP)
+    RETURNS numeric(8, 2) AS
+$$
+BEGIN
+    RETURN (SELECT ROUND(get_price(id_product, t)*(1 + (get_vat(id, t))/100.0)*((100 - discount)/100.0), 2)
+            FROM products_problems WHERE id_product_with_problem = id_problem);
+END;
+$$ LANGUAGE 'plpgsql';
+
 CREATE OR REPLACE FUNCTION get_sale_price(id INTEGER)
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
     RETURN (SELECT SUM(get_price(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_sold
+            WHERE id_sale = id) +
+           (SELECT SUM(get_price_problem(id_product_with_problem, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
+            FROM products_problems_sold
             WHERE id_sale = id);
 END;
 $$ LANGUAGE 'plpgsql';
@@ -98,6 +120,9 @@ $$
 BEGIN
     RETURN (SELECT SUM(get_gross_price_time(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_sold
+            WHERE id_sale = id) +
+           (SELECT SUM(get_gross_price_time_problem(id_product_with_problem, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
+            FROM products_problems_sold
             WHERE id_sale = id);
 END;
 $$ LANGUAGE 'plpgsql';
@@ -148,8 +173,8 @@ DECLARE
 BEGIN
     RETURN QUERY SELECT *, TRUE FROM sale_product_info(id_s) UNION SELECT
     p.id, p.name, ps.quantity,
-    get_price(p.id, time) * (100 - pp.discount) / 100,
-    get_gross_price_time(p.id, time) * (100 - pp.discount) / 100, FALSE
+    get_price(p.id, time) * (100 - pp.discount) / 100.0,
+    get_gross_price_time(p.id, time) * (100 - pp.discount) / 100.0, FALSE
     FROM PRODUCTS_PROBLEMS_SOLD ps JOIN PRODUCTS_PROBLEMS pp USING (id_product_with_problem)
     JOIN products p ON p.id = pp.id_product
     WHERE ps.id_sale = id_s;
@@ -167,6 +192,6 @@ BEGIN
     RETURN QUERY
     SELECT id_product_with_problem, problem_description, quantity
     FROM PRODUCTS_PROBLEMS
-    WHERE id_product = id_return AND quantity > 0;
+    WHERE id_product = id AND quantity > 0;
 END;
 $$ LANGUAGE 'plpgsql';

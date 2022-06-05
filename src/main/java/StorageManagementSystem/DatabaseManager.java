@@ -34,7 +34,7 @@ public class DatabaseManager {
     private PreparedStatement getAllSuppliers;
     private PreparedStatement getProductPropertiesFromId;
     private PreparedStatement addNewDelivery, addNewDeliveryProduct;
-    private PreparedStatement addNewSale, addNewSaleProduct;
+    private PreparedStatement addNewSale, addNewSaleProduct, addNewSaleProductProblem;
     private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname;
     private PreparedStatement getTableOfProducts;
     private PreparedStatement registerNewEmployee;
@@ -61,6 +61,7 @@ public class DatabaseManager {
             addNewDeliveryProduct.close();
             addNewSale.close();
             addNewSaleProduct.close();
+            addNewSaleProductProblem.close();
             checkLoginExist.close();
             checkPasswordCorrect.close();
             getFirstName.close();
@@ -80,7 +81,7 @@ public class DatabaseManager {
             getAllCategories = getAllSales = getAllSuppliers = null;
             getProductPropertiesFromId = null;
             addNewDelivery = addNewDeliveryProduct = null;
-            addNewSale = addNewSaleProduct = null;
+            addNewSale = addNewSaleProduct = addNewSaleProductProblem = null;
             checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
             getTableOfProducts = null;
             registerNewEmployee = null;
@@ -122,6 +123,7 @@ public class DatabaseManager {
 
             addNewSale = conn.prepareStatement("INSERT INTO sales (sales_date) VALUES (?) RETURNING id_sale");
             addNewSaleProduct = conn.prepareStatement("INSERT INTO products_sold (id_sale, id_product, quantity) VALUES (?, ?, ?)");
+            addNewSaleProductProblem = conn.prepareStatement("INSERT INTO products_sold (id_sale, id_product_with_problem, quantity) VALUES (?, ?, ?)");
 
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
             checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
@@ -464,7 +466,13 @@ public class DatabaseManager {
         }
     }
 
-    public void addNewSaleProduct(int id_sale, int id_product, double quantity) throws SQLException {  // łapiemy triggery z psql
+    public void addNewSaleProduct(int id_sale, int id_product, double quantity, ProductWithProblemRepr item) throws SQLException {  // łapiemy triggery z psql
+        if(item != null) {
+            addNewSaleProductProblem.setInt(1, id_sale);
+            addNewSaleProductProblem.setInt(2, item.id_product());
+            addNewSaleProductProblem.setDouble(3, quantity);
+            update(addNewSaleProductProblem);
+        }
         addNewSaleProduct.setInt(1, id_sale);
         addNewSaleProduct.setInt(2, id_product);
         addNewSaleProduct.setDouble(3, quantity);

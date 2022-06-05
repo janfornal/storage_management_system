@@ -147,4 +147,54 @@ ON PRODUCTS
 FOR EACH ROW
 EXECUTE PROCEDURE insert_id_products_to_store_status();
 
+---------------------------------------------
+
+CREATE FUNCTION check_insert_products_problems_sold()
+    RETURNS trigger AS
+$$
+DECLARE
+    val NUMERIC;
+BEGIN
+    SELECT quantity FROM products_problems WHERE id_product_with_problem = NEW.id_product_with_problem INTO val;
+
+    IF val < NEW.quantity THEN
+        RETURN NULL;
+    END IF;
+
+    UPDATE products_problems
+    SET quantity = quantity - NEW.quantity
+    WHERE id_product_with_problem = NEW.id_product_with_problem;
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+--trigger below disables putting new record in PRODUKTY_SPRZEDAZ where ilosc > ilosc in
+--respective record in stan_magazynu, also changes respective ilosc value
+CREATE TRIGGER trigger_check_insert_products_problems_sold
+    BEFORE INSERT
+    ON PRODUCTS_PROBLEMS_SOLD
+    FOR EACH ROW
+EXECUTE PROCEDURE check_insert_products_problems_sold();
+
+---------------------------------------------------------------
+
+CREATE FUNCTION check_delete_products_problems_sold()
+    RETURNS trigger AS
+$$
+BEGIN
+    UPDATE products_problems
+    SET quantity = quantity + OLD.quantity
+    WHERE id_product_with_problem = OLD.id_product_with_problem;
+    RETURN OLD;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER check_delete_products_problems_sold
+    BEFORE DELETE
+    ON PRODUCTS_PROBLEMS_SOLD
+    FOR EACH ROW
+EXECUTE PROCEDURE check_delete_products_problems_sold();
+
+---------------------------------------------------------------
+
 COMMIT;

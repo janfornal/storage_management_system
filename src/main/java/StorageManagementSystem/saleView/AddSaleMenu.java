@@ -69,6 +69,35 @@ public class AddSaleMenu {
         };
         nameComboBox.setCellFactory(productCellFactory);
         nameComboBox.setVisibleRowCount(10);
+        Callback<ListView<ProductWithProblemRepr>, ListCell<ProductWithProblemRepr>> problemCellFactory = new Callback<>() {
+            @Override
+            public ListCell<ProductWithProblemRepr> call(ListView<ProductWithProblemRepr> l) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(ProductWithProblemRepr item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty) {
+                            setGraphic(null);
+                        } else {
+                            setText(item.id_product() + ": " + item.description() + ", " + item.quantity());
+                        }
+                    }
+                };
+            }
+        };
+        idReturnComboBox.setCellFactory(problemCellFactory);
+        idReturnComboBox.setVisibleRowCount(10);
+        idReturnComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(ProductWithProblemRepr item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setGraphic(null);
+                } else {
+                    setText(item.id_product() + ": " + item.description() + ", " + item.quantity());
+                }
+            }
+        });
     }
 
 
@@ -112,6 +141,10 @@ public class AddSaleMenu {
 
     public ProductRepr productBoxItem() {
         return nameComboBox.getValue();
+    }
+
+    public ProductWithProblemRepr productProblemBoxItem() {
+        return idReturnComboBox.getValue();
     }
 
     public Double amountFieldItem() {    // TODO dodaj jakiś exception

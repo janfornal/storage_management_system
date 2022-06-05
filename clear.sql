@@ -24,6 +24,8 @@ DROP TABLE IF EXISTS BRAND                                      CASCADE;
 
 
 
+DROP FUNCTION IF EXISTS check_insert_products_problems_sold     CASCADE;
+DROP FUNCTION IF EXISTS check_delete_products_problems_sold     CASCADE;
 DROP FUNCTION IF EXISTS returned_check                          CASCADE;
 DROP FUNCTION IF EXISTS allowed_param_check                     CASCADE;
 DROP FUNCTION IF EXISTS check_insert_products_sold              CASCADE;
@@ -37,8 +39,10 @@ DROP FUNCTION IF EXISTS get_gross_price                         CASCADE;
 DROP FUNCTION IF EXISTS get_current_vat                         CASCADE;
 DROP FUNCTION IF EXISTS get_current_price                       CASCADE;
 DROP FUNCTION IF EXISTS get_price                               CASCADE;
+DROP FUNCTION IF EXISTS get_price_problem                       CASCADE;
 DROP FUNCTION IF EXISTS get_vat                                 CASCADE;
 DROP FUNCTION IF EXISTS get_gross_price_time                    CASCADE;
+DROP FUNCTION IF EXISTS get_gross_price_time_problem            CASCADE;
 DROP FUNCTION IF EXISTS get_sale_price                          CASCADE;
 DROP FUNCTION IF EXISTS get_gross_sale_price                    CASCADE;
 DROP FUNCTION IF EXISTS sale_product_info                       CASCADE;
