@@ -3,6 +3,7 @@ package StorageManagementSystem.saleView;
 import StorageManagementSystem.records.CategoryRecord;
 import StorageManagementSystem.GUIPresenter;
 import StorageManagementSystem.records.ProductRepr;
+import StorageManagementSystem.records.ProductWithProblemRepr;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +16,7 @@ public class AddSaleMenu {
     private ComboBox<CategoryRecord> categoryComboBox;
 
     @FXML
-    private ComboBox<?> idReturnComboBox;
+    private ComboBox<ProductWithProblemRepr> idReturnComboBox;
 
     @FXML
     private ComboBox<ProductRepr> nameComboBox;
@@ -102,6 +103,7 @@ public class AddSaleMenu {
                 }
             }
         });
+        idReturnComboBox.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getProductsWithProblems(selectedId[0])));
     }
 
     public CategoryRecord categoryBoxItem() {

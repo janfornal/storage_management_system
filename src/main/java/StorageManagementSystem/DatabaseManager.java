@@ -1,9 +1,6 @@
 package StorageManagementSystem;
 
-import StorageManagementSystem.records.CategoryRecord;
-import StorageManagementSystem.records.ProductRepr;
-import StorageManagementSystem.records.SaleRepr;
-import StorageManagementSystem.records.SupplierRecord;
+import StorageManagementSystem.records.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -31,6 +28,7 @@ public class DatabaseManager {
     private PreparedStatement getPriceOfProductFromSale, getGrossOfProductFromSale;
     private PreparedStatement getProductNameFromId, getIdFromProductName;
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId, getProductsFromCategoryName;
+    private PreparedStatement getProductsWithProblems;
     private PreparedStatement getAllCategories;
     private PreparedStatement getAllSales;
     private PreparedStatement getAllSuppliers;
@@ -54,6 +52,7 @@ public class DatabaseManager {
             getProductsIdFromCategoryId.close();
             getProductsNameFromCategoryId.close();
             getProductsFromCategoryName.close();
+            getProductsWithProblems.close();
             getAllCategories.close();
             getAllSales.close();
             getAllSuppliers.close();
@@ -77,6 +76,7 @@ public class DatabaseManager {
             getPriceOfProductFromSale = getGrossOfProductFromSale = null;
             getProductNameFromId = getIdFromProductName = null;
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = getProductsFromCategoryName = null;
+            getProductsWithProblems = null;
             getAllCategories = getAllSales = getAllSuppliers = null;
             getProductPropertiesFromId = null;
             addNewDelivery = addNewDeliveryProduct = null;
@@ -106,6 +106,8 @@ public class DatabaseManager {
             getProductsIdFromCategoryId = conn.prepareStatement("SELECT id FROM PRODUCTS WHERE id_category = ?");
             getProductsNameFromCategoryId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id_category = ?");
             getProductsFromCategoryName = conn.prepareStatement("SELECT * FROM nice_repr_of_products() WHERE category = ?");
+
+            getProductsWithProblems = conn.prepareStatement("SELECT * FROM repr_of_products_problems(?)");
 
             getAllCategories = conn.prepareStatement("SELECT * FROM CATEGORIES");
             getAllSales = conn.prepareStatement("SELECT * FROM SALES");
@@ -248,6 +250,18 @@ public class DatabaseManager {
             ArrayList<SupplierRecord> returnList = new ArrayList<>();
             while(rs.next()) {
                 returnList.add(new SupplierRecord(rs.getInt(1), rs.getString(2)));
+            }
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            return returnList;
+        }
+    }
+
+    private ArrayList<ProductWithProblemRepr> queryProductProblemList(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            ArrayList<ProductWithProblemRepr> returnList = new ArrayList<>();
+            while(rs.next()) {
+                returnList.add(new ProductWithProblemRepr(rs.getInt(1), rs.getString(2), rs.getDouble(3)));
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
             return returnList;
@@ -416,6 +430,15 @@ public class DatabaseManager {
         }
     }
 
+    public ArrayList<ProductWithProblemRepr> getProductsWithProblems(int i) {
+        try {
+            getProductsWithProblems.setInt(1, i);
+            return queryProductProblemList(getProductsWithProblems);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void registerNewEmployee(String login, String password, String first_name, String last_name) {
         try {
             registerNewEmployee.setString(1, login);
@@ -447,5 +470,6 @@ public class DatabaseManager {
         addNewSaleProduct.setDouble(3, quantity);
         update(addNewSaleProduct);
     }
+
 }
 
