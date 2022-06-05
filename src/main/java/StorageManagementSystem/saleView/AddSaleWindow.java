@@ -55,7 +55,13 @@ public class AddSaleWindow implements FunctionalityWindow {
             GUIPresenter.databaseManager.addNewSaleProduct(idOfSale, asm.productBoxItem().id(), asm.amountFieldItem(), asm.productProblemBoxItem());
             addSaleMenuController.setNetPriceLabel(GUIPresenter.databaseManager.getPriceOfProductFromSale(idOfSale));
             addSaleMenuController.setWholePriceLabel(GUIPresenter.databaseManager.getGrossOfProductFromSale(idOfSale));
-            UsedProductRepr modifiedRepr = new UsedProductRepr(asm.productBoxItem().id(), asm.productBoxItem().brand(), asm.productBoxItem().name(), asm.productBoxItem().category(), null, asm.amountFieldItem(), asm.productBoxItem().netPrice());
+            UsedProductRepr modifiedRepr = new UsedProductRepr(asm.productBoxItem().id(),
+                    asm.productBoxItem().brand(),
+                    asm.productBoxItem().name(),
+                    asm.productBoxItem().category(),
+                    (asm.productProblemBoxItem() == null) ? null : asm.productProblemBoxItem().id_product(),
+                    asm.amountFieldItem(),
+                    asm.productBoxItem().netPrice());
             flattenedProductAnchor2Controller.add(modifiedRepr);
         } catch (SQLException e) {
             Platform.runLater(

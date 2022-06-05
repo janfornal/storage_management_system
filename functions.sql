@@ -105,12 +105,12 @@ CREATE OR REPLACE FUNCTION get_sale_price(id INTEGER)
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
-    RETURN (SELECT SUM(get_price(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
+    RETURN COALESCE((SELECT SUM(get_price(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_sold
-            WHERE id_sale = id) +
-           (SELECT SUM(get_price_problem(id_product_with_problem, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
+            WHERE id_sale = id), 0.0) +
+           COALESCE((SELECT SUM(get_price_problem(id_product_with_problem, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_problems_sold
-            WHERE id_sale = id);
+            WHERE id_sale = id), 0.0);
 END;
 $$ LANGUAGE 'plpgsql';
 
@@ -118,12 +118,12 @@ CREATE OR REPLACE FUNCTION get_gross_sale_price(id INTEGER)
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
-    RETURN (SELECT SUM(get_gross_price_time(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
+    RETURN COALESCE((SELECT SUM(get_gross_price_time(id_product, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_sold
-            WHERE id_sale = id) +
-           (SELECT SUM(get_gross_price_time_problem(id_product_with_problem, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
+            WHERE id_sale = id), 0.0) +
+           COALESCE((SELECT SUM(get_gross_price_time_problem(id_product_with_problem, (SELECT sales_date FROM sales WHERE id_sale = id))*quantity)
             FROM products_problems_sold
-            WHERE id_sale = id);
+            WHERE id_sale = id), 0.0);
 END;
 $$ LANGUAGE 'plpgsql';
 
