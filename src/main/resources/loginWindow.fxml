@@ -12,19 +12,19 @@
    <children>
       <AnchorPane fx:id="leftAnchor" prefHeight="300.0" prefWidth="225.0">
          <children>
-            <Label fx:id="LoginLabel" layoutX="14.0" layoutY="110.0" prefHeight="39.0" prefWidth="202.0" text="Login">
+            <Label fx:id="LoginLabel" alignment="CENTER" layoutX="14.0" layoutY="110.0" prefHeight="39.0" prefWidth="202.0" text="Login">
                <font>
                   <Font size="20.0" />
                </font>
             </Label>
-            <Button fx:id="registerButton" layoutX="14.0" layoutY="261.0" mnemonicParsing="false" onAction="#changeRegisterWindow" prefHeight="26.0" prefWidth="86.0" text="Register" />
+            <Button fx:id="registerButton" layoutX="14.0" layoutY="261.0" mnemonicParsing="false" onAction="#changeRegisterWindow" prefHeight="26.0" prefWidth="86.0" style="-fx-background-color: LIGHTBLUE;" text="Register" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="rightAnchor" prefHeight="300.0" prefWidth="225.0">
          <children>
             <TextField fx:id="usernameField" layoutX="11.0" layoutY="114.0" prefHeight="26.0" prefWidth="202.0" promptText="Enter your username" />
             <PasswordField fx:id="passwordField" layoutX="11.0" layoutY="150.0" prefHeight="26.0" prefWidth="202.0" promptText="Enter your password" />
-            <Button fx:id="loginButton" layoutX="129.0" layoutY="261.0" mnemonicParsing="false" onAction="#enterApplication" prefHeight="26.0" prefWidth="85.0" text="Login" />
+            <Button fx:id="loginButton" layoutX="129.0" layoutY="261.0" mnemonicParsing="false" onAction="#enterApplication" prefHeight="26.0" prefWidth="85.0" style="-fx-background-color: LIGHTBLUE;" text="Login" />
          </children>
       </AnchorPane>
    </children>

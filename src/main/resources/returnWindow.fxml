@@ -2,7 +2,6 @@
 
 <?import javafx.scene.layout.HBox?>
 
-
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.returnView.ReturnWindow">
    <children>
       <fx:include fx:id="returnProductAnchor" source="returnProductAnchor.fxml" />

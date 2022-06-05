@@ -6,14 +6,18 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.returnView.ReturnMenu">
    <children>
-      <Label fx:id="chosenProductLabel" alignment="TOP_LEFT" layoutX="25.0" layoutY="25.0" prefHeight="35.0" prefWidth="250.0" text="Chosen product" />
-      <ComboBox fx:id="saleComboBox" layoutX="25.0" layoutY="70.0" prefHeight="26.0" prefWidth="250.0" promptText="Select sale" />
+      <Label fx:id="chosenProductLabel" alignment="CENTER" layoutX="25.0" layoutY="25.0" prefHeight="35.0" prefWidth="250.0" text="Chosen product">
+         <font>
+            <Font size="14.0" />
+         </font></Label>
+      <ComboBox fx:id="saleComboBox" layoutX="25.0" layoutY="70.0" prefHeight="26.0" prefWidth="250.0" promptText="Select sale" style="-fx-background-color: LIGHTBLUE;" />
       <TextArea fx:id="descriptionTextArea" layoutX="25.0" layoutY="125.0" prefHeight="175.0" prefWidth="250.0" promptText="Here you can provide problem description" />
-      <Button fx:id="productsProblemsButton" layoutX="25.0" layoutY="365.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="250.0" text="Return and add to store" />
-      <Button fx:id="complaintButton" layoutX="25.0" layoutY="400.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="250.0" text="Make complaint" />
+      <Button fx:id="productsProblemsButton" layoutX="25.0" layoutY="365.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="250.0" style="-fx-background-color: LIGHTBLUE;" text="Return and add to store" />
+      <Button fx:id="complaintButton" layoutX="25.0" layoutY="400.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="250.0" style="-fx-background-color: LIGHTBLUE;" text="Make complaint" />
       <TextField fx:id="selectAmountField" layoutX="25.0" layoutY="330.0" prefHeight="26.0" prefWidth="250.0" promptText="Select amount" />
    </children>
 </AnchorPane>
