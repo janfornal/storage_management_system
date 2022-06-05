@@ -16,14 +16,6 @@ BEGIN
         RAISE EXCEPTION 'returned too many products';
     END IF;
 
-    IF (
-        SELECT sales_date 
-        FROM SALES
-        WHERE id_sale = NEW.id_sale
-    ) > NEW.return_date THEN 
-        RAISE EXCEPTION 'returned before sale';
-    END IF;
-
     RETURN NEW;
 END;
 $$ LANGUAGE 'plpgsql';
@@ -31,6 +23,12 @@ $$ LANGUAGE 'plpgsql';
 CREATE TRIGGER trigger_returned_check
 AFTER INSERT
 ON CLIENTS_RETURN
+FOR EACH ROW
+EXECUTE PROCEDURE returned_check();
+
+CREATE TRIGGER trigger_complaints_check
+AFTER INSERT
+ON COMPLAINT
 FOR EACH ROW
 EXECUTE PROCEDURE returned_check();
 
@@ -194,6 +192,78 @@ CREATE TRIGGER check_delete_products_problems_sold
     ON PRODUCTS_PROBLEMS_SOLD
     FOR EACH ROW
 EXECUTE PROCEDURE check_delete_products_problems_sold();
+
+---------------------------------------------------------------
+
+CREATE FUNCTION before_insert_on_clients_return()
+    RETURNS trigger AS
+$$
+BEGIN
+    IF NEW.return_date < (SELECT sales_date FROM SALES WHERE id_sale = NEW.id_sale) THEN
+        RETURN NULL;
+    END IF;
+
+    INSERT INTO
+    PRODUCTS_PROBLEMS (id_product, quantity, exhibition, returned, discount)
+    VALUES (NEW.id_product, NEW.quantity, FALSE, TRUE, 10);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER before_insert_on_clients_return
+BEFORE INSERT
+ON CLIENTS_RETURN
+FOR EACH ROW
+EXECUTE PROCEDURE before_insert_on_clients_return();
+
+---------------------------------------------------------------
+
+CREATE FUNCTION before_update_or_insert_on_complaint()
+    RETURNS trigger AS
+$$
+BEGIN
+    IF NEW.complaint_date < (SELECT sales_date FROM SALES WHERE id_sale = NEW.id_sale) THEN
+        RETURN OLD;
+    END IF;
+
+    IF OLD IS NOT NULL AND OLD.result_date IS NOT NULL THEN
+        RETURN OLD;
+    END IF;
+
+    IF NEW.complaint_description IS NULL AND
+       NEW.result_date IS NULL AND
+       NEW.complaint_accepted IS NULL AND
+       NEW.id_employee IS NULL THEN
+        RETURN NEW;
+    END IF;
+
+    IF NEW.complaint_description IS NOT NULL AND
+       NEW.result_date IS NOT NULL AND
+       NEW.complaint_accepted IS NOT NULL AND
+       NEW.id_employee IS NOT NULL THEN
+        IF NEW.result_date < NEW.complaint_date THEN
+            RETURN OLD;
+        END IF;
+
+        IF NEW.complaint_accepted THEN
+            INSERT INTO
+            PRODUCTS_PROBLEMS (id_product, quantity, exhibition, returned, problem_description, discount)
+            VALUES (NEW.id_product, NEW.quantity, FALSE, FALSE, NEW.complaint_description, 10);
+        END IF;
+
+        RETURN NEW;
+    END IF;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER before_update_or_insert_on_complaint
+BEFORE INSERT OR UPDATE
+ON COMPLAINT
+FOR EACH ROW
+EXECUTE PROCEDURE before_update_or_insert_on_complaint();
 
 ---------------------------------------------------------------
 
