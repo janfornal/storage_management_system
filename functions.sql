@@ -158,15 +158,15 @@ $$ LANGUAGE 'plpgsql';
 
 CREATE OR REPLACE FUNCTION repr_of_products_problems(id INTEGER)
     RETURNS TABLE(
-         id_product_with_problem INTEGER,
-         problem_description VARCHAR(100),
-         quantity NUMERIC(10)
+         id_return INTEGER,
+         description VARCHAR(100),
+         quant NUMERIC(10)
      ) AS
 $$
 BEGIN
     RETURN QUERY
     SELECT id_product_with_problem, problem_description, quantity
     FROM PRODUCTS_PROBLEMS
-    WHERE id_product = id AND quantity > 0;
+    WHERE id_product = id_return AND quantity > 0;
 END;
 $$ LANGUAGE 'plpgsql';
