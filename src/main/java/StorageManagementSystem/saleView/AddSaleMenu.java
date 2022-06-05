@@ -15,9 +15,6 @@ public class AddSaleMenu {
     private ComboBox<CategoryRecord> categoryComboBox;
 
     @FXML
-    private CheckBox chooseHistory;
-
-    @FXML
     private ComboBox<?> idReturnComboBox;
 
     @FXML
@@ -71,17 +68,6 @@ public class AddSaleMenu {
         };
         nameComboBox.setCellFactory(productCellFactory);
         nameComboBox.setVisibleRowCount(10);
-        nameComboBox.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(ProductRepr item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setGraphic(null);
-                } else {
-                    setText(item.id() + ": " + item.brand() + " " + item.name());
-                }
-            }
-        });
     }
 
 
@@ -100,6 +86,22 @@ public class AddSaleMenu {
             }
         });
         nameComboBox.setItems(FXCollections.observableArrayList(GUIPresenter.databaseManager.getProductsFromCategoryName(nameOfCategory[0])));
+    }
+
+    public void chosenProductHandler(ActionEvent actionEvent) {
+        final int[] selectedId = new int[1];
+        nameComboBox.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(ProductRepr item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setGraphic(null);
+                } else {
+                    setText(item.id() + ": " + item.brand() + " " + item.name());
+                    selectedId[0] = item.id();
+                }
+            }
+        });
     }
 
     public CategoryRecord categoryBoxItem() {
