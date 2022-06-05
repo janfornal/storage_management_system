@@ -34,7 +34,8 @@ public class AddSaleWindow implements FunctionalityWindow {
     }
 
     public void close() {
-        String cleaner = "DELETE FROM products_sold WHERE id_sale = " + idOfSale
+        String cleaner = "DELETE FROM products_problems_sold WHERE id_sale = " + idOfSale
+                + "; DELETE FROM products_sold WHERE id_sale = " + idOfSale
                 + "; DELETE FROM sales WHERE id_sale = " + idOfSale;
         try {
             GUIPresenter.databaseManager.updateFromString(cleaner);
@@ -61,9 +62,9 @@ public class AddSaleWindow implements FunctionalityWindow {
                     asm.productBoxItem().category(),
                     (asm.productProblemBoxItem() == null) ? null : asm.productProblemBoxItem().id_product(),
                     asm.amountFieldItem(),
-                    asm.productBoxItem().netPrice());
+                    (asm.productProblemBoxItem() == null) ? null : asm.productProblemBoxItem().price());
             flattenedProductAnchor2Controller.add(modifiedRepr);
-        } catch (SQLException e) {
+        } catch (IllegalStateException e) {
             Platform.runLater(
                     () -> new Alert(Alert.AlertType.ERROR, e.getMessage()).showAndWait()
             );

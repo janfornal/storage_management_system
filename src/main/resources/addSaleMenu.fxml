@@ -10,7 +10,7 @@
    <children>
       <ComboBox fx:id="categoryComboBox" layoutX="25.0" layoutY="25.0" onAction="#chosenCategoryHandler" prefWidth="150.0" promptText="Category" />
       <ComboBox fx:id="nameComboBox" layoutX="25.0" layoutY="63.0" onAction="#chosenProductHandler" prefWidth="150.0" promptText="Product" />
-      <ComboBox fx:id="idReturnComboBox" layoutX="25.0" layoutY="105.0" prefWidth="150.0" promptText="Select new product" />
+      <ComboBox fx:id="idReturnComboBox" layoutX="25.0" layoutY="105.0" prefHeight="26.0" prefWidth="325.0" promptText="Select used product (ignore this if you want new)" />
       <Label fx:id="netPriceLabel" layoutX="575.0" layoutY="25.0" prefHeight="25.0" prefWidth="150.0" text="Net price">
          <font>
             <Font size="14.0" />

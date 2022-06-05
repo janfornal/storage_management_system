@@ -263,7 +263,7 @@ public class DatabaseManager {
             Service.DB_QUERY_CALL_STREAM.println(st);
             ArrayList<ProductWithProblemRepr> returnList = new ArrayList<>();
             while(rs.next()) {
-                returnList.add(new ProductWithProblemRepr(rs.getInt(1), rs.getString(2), rs.getDouble(3)));
+                returnList.add(new ProductWithProblemRepr(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4)));
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
             return returnList;
@@ -466,17 +466,27 @@ public class DatabaseManager {
         }
     }
 
-    public void addNewSaleProduct(int id_sale, int id_product, double quantity, ProductWithProblemRepr item) throws SQLException {  // łapiemy triggery z psql
-        if(item != null) {
-            addNewSaleProductProblem.setInt(1, id_sale);
-            addNewSaleProductProblem.setInt(2, item.id_product());
-            addNewSaleProductProblem.setDouble(3, quantity);
-            update(addNewSaleProductProblem);
+    public void addNewSaleProduct(int id_sale, int id_product, double quantity, ProductWithProblemRepr item) throws IllegalStateException {  // łapiemy triggery z psql
+        int res;
+        try {
+            if(item != null) {
+                addNewSaleProductProblem.setInt(1, id_sale);
+                addNewSaleProductProblem.setInt(2, item.id_product());
+                addNewSaleProductProblem.setDouble(3, quantity);
+                res = update(addNewSaleProductProblem);
+            }
+            else {
+                addNewSaleProduct.setInt(1, id_sale);
+                addNewSaleProduct.setInt(2, id_product);
+                addNewSaleProduct.setDouble(3, quantity);
+                res = update(addNewSaleProduct);
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
         }
-        addNewSaleProduct.setInt(1, id_sale);
-        addNewSaleProduct.setInt(2, id_product);
-        addNewSaleProduct.setDouble(3, quantity);
-        update(addNewSaleProduct);
+        if(res == 0) {
+            throw new IllegalStateException("you have chosen unavailable number of products");
+        }
     }
 
 }

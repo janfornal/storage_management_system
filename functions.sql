@@ -185,12 +185,13 @@ CREATE OR REPLACE FUNCTION repr_of_products_problems(id INTEGER)
     RETURNS TABLE(
          id_return INTEGER,
          description VARCHAR(100),
-         quant NUMERIC(10)
+         quant NUMERIC(10),
+         price NUMERIC(8, 2)
      ) AS
 $$
 BEGIN
     RETURN QUERY
-    SELECT id_product_with_problem, problem_description, quantity
+    SELECT id_product_with_problem, problem_description, quantity, get_price_problem(id_product_with_problem, now()::timestamp)
     FROM PRODUCTS_PROBLEMS
     WHERE id_product = id AND quantity > 0;
 END;
