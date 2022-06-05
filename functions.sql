@@ -96,7 +96,7 @@ CREATE OR REPLACE FUNCTION get_gross_price_time_problem(id_problem INTEGER, t TI
     RETURNS numeric(8, 2) AS
 $$
 BEGIN
-    RETURN (SELECT ROUND(get_price(id_product, t)*(1 + (get_vat(id, t))/100.0)*((100 - discount)/100.0), 2)
+    RETURN (SELECT ROUND(get_price(id_product, t)*(1 + (get_vat(id_product, t))/100.0)*((100 - discount)/100.0), 2)
             FROM products_problems WHERE id_product_with_problem = id_problem);
 END;
 $$ LANGUAGE 'plpgsql';

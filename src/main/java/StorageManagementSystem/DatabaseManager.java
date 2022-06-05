@@ -123,7 +123,7 @@ public class DatabaseManager {
 
             addNewSale = conn.prepareStatement("INSERT INTO sales (sales_date) VALUES (?) RETURNING id_sale");
             addNewSaleProduct = conn.prepareStatement("INSERT INTO products_sold (id_sale, id_product, quantity) VALUES (?, ?, ?)");
-            addNewSaleProductProblem = conn.prepareStatement("INSERT INTO products_sold (id_sale, id_product_with_problem, quantity) VALUES (?, ?, ?)");
+            addNewSaleProductProblem = conn.prepareStatement("INSERT INTO products_problems_sold (id_sale, id_product_with_problem, quantity) VALUES (?, ?, ?)");
 
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
             checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
