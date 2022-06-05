@@ -22,7 +22,7 @@ public interface Service {
     PrintStream SNT_MESSAGE = NULL_STREAM; // report messages that you actually sent
 
     PrintStream DB_DRIVER_ERROR_STREAM = ERROR_STREAM;
-    PrintStream DB_CONNECTION_ERROR_STREAM = NULL_STREAM;
+    PrintStream DB_CONNECTION_ERROR_STREAM = ERROR_STREAM;
     PrintStream DB_CONNECTION_INFO_STREAM = INFO_STREAM;
     PrintStream DB_QUERY_CALL_STREAM = NULL_STREAM;
     PrintStream DB_QUERY_RESULT_STREAM = INFO_STREAM;

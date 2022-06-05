@@ -61,10 +61,18 @@ EXECUTE PROCEDURE allowed_param_check();
 
 ---------------------------------------------------------------
 
-CREATE FUNCTION update_decrease_store_status()
+CREATE FUNCTION check_insert_products_sold()
     RETURNS trigger AS
 $$
+DECLARE
+    val NUMERIC;
 BEGIN
+    SELECT quantity FROM store_status WHERE id_product = NEW.id_product INTO val;
+
+    IF val < NEW.quantity THEN
+        RETURN NULL;
+    END IF;
+
     UPDATE STORE_STATUS
     SET quantity = quantity - NEW.quantity
     WHERE id_product = NEW.id_product;
@@ -72,6 +80,38 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
+--trigger below disables putting new record in PRODUKTY_SPRZEDAZ where ilosc > ilosc in
+--respective record in stan_magazynu, also changes respective ilosc value
+CREATE TRIGGER trigger_check_insert_products_sold
+    BEFORE INSERT
+    ON PRODUCTS_SOLD
+    FOR EACH ROW
+EXECUTE PROCEDURE check_insert_products_sold();
+
+---------------------------------------------------------------
+
+CREATE RULE check_mod_products_sold AS ON UPDATE TO PRODUCTS_SOLD DO INSTEAD NOTHING;
+
+CREATE FUNCTION check_delete_products_sold()
+    RETURNS trigger AS
+$$
+BEGIN
+    UPDATE STORE_STATUS
+    SET quantity = quantity + OLD.quantity
+    WHERE id_product = OLD.id_product;
+    RETURN OLD;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER check_delete_products_sold
+    BEFORE DELETE
+    ON PRODUCTS_SOLD
+    FOR EACH ROW
+EXECUTE PROCEDURE check_delete_products_sold();
+
+---------------------------------------------------------------
+
+--updates record in STORE_STATUS, after inserting into PRODUCTS_DELIVERIES
 CREATE FUNCTION update_increase_store_status()
     RETURNS trigger AS
 $$
@@ -83,32 +123,7 @@ BEGIN
 END;
 $$ LANGUAGE 'plpgsql';
 
-CREATE FUNCTION update_increase_store_status_2()
-    RETURNS trigger AS
-$$
-BEGIN
-    UPDATE STORE_STATUS
-    SET quantity = quantity + OLD.quantity
-    WHERE id_product = OLD.id_product;
-    RETURN OLD;
-END;
-$$ LANGUAGE 'plpgsql';
-
---trigger below disables putting new record in PRODUKTY_SPRZEDAZ where ilosc > ilosc in
---respective record in stan_magazynu, also changes respective ilosc value
-CREATE TRIGGER trigger_ilosc_ps  
-AFTER INSERT
-ON PRODUCTS_SOLD
-FOR EACH ROW
-EXECUTE PROCEDURE update_decrease_store_status();
-
-CREATE TRIGGER trigger_ilosc_ps_2
-    BEFORE DELETE
-    ON PRODUCTS_SOLD
-    FOR EACH ROW
-EXECUTE PROCEDURE update_increase_store_status_2();
---updates record in stan_magazynu, after inserting into PRODUKTY_DOSTAWY
-CREATE TRIGGER trigger_ilosc_pd  
+CREATE TRIGGER trigger_ilosc_pd
 AFTER INSERT
 ON PRODUCTS_DELIVERIES
 FOR EACH ROW
