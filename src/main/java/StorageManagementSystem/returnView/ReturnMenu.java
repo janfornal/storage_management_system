@@ -138,7 +138,7 @@ public class ReturnMenu {
                     );
                     return;
                 }
-                GUIPresenter.databaseManager.addComplaint(windowController.selectedItem().id(), saleComboBox.getValue().id_sale() , quantity.intValue(), new Date(System.currentTimeMillis()),descriptionTextArea.getText());
+                GUIPresenter.databaseManager.addComplaint(windowController.selectedItem().id(), saleComboBox.getValue().id_sale() , quantity.intValue(), descriptionTextArea.getText());
                 GUIPresenter.standardCloseFunctionalityStage();
             }
         }
@@ -146,5 +146,6 @@ public class ReturnMenu {
             throw new RuntimeException("application recognizes wrong functionality window");
         }
     }
+
 }
 
