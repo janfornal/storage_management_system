@@ -204,8 +204,8 @@ BEGIN
     END IF;
 
     INSERT INTO
-    PRODUCTS_PROBLEMS (id_product, quantity, exhibition, returned, discount)
-    VALUES (NEW.id_product, NEW.quantity, FALSE, TRUE, 10);
+    PRODUCTS_PROBLEMS (id_product, quantity, exhibition, returned, problem_description, discount)
+    VALUES (NEW.id_product, NEW.quantity, FALSE, TRUE, 'produkt zwrócony po zakupie', 10);
 
     RETURN NEW;
 END;
