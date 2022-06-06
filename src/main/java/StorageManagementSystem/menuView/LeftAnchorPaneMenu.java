@@ -1,4 +1,4 @@
-package StorageManagementSystem.deliveryView;
+package StorageManagementSystem.menuView;
 
 import StorageManagementSystem.fxmlAssistants.FunctionalityValues;
 import StorageManagementSystem.GUIPresenter;
@@ -39,6 +39,10 @@ public class LeftAnchorPaneMenu {
 
     public void provideReturnWindow(javafx.event.ActionEvent actionEvent) {
         GUIPresenter.enterFunctionalityWindow(FunctionalityValues.RETURN);
+    }
+
+    public void provideComplaintWindow(javafx.event.ActionEvent actionEvent) {
+        GUIPresenter.enterFunctionalityWindow(FunctionalityValues.COMPLAINT);
     }
 }
 

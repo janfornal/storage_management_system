@@ -18,6 +18,7 @@ import java.io.IOException;
 public class GUIPresenter extends Application {
     public static DatabaseManager databaseManager;
     public static String login;
+    public static Integer idEmployee;
     public static ProductsTableMenu menuController;
     public static FunctionalityWindow functionalityController;
     private static Stage enterStage;
@@ -47,6 +48,7 @@ public class GUIPresenter extends Application {
 
     public static void enterMenu(String loginUser) {
         login = loginUser;
+        idEmployee = databaseManager.getIdEmployee(loginUser);
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(GUIPresenter.class.getResource("/productsTableMenu.fxml"));

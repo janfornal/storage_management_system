@@ -30,6 +30,7 @@ public class DatabaseManager {
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId, getProductsFromCategoryName;
     private PreparedStatement getProductsFromSale;
     private PreparedStatement getProductsWithProblems;
+    private PreparedStatement getComplaints;
     private PreparedStatement getAllCategories;
     private PreparedStatement getAllSales;
     private PreparedStatement getAllSuppliers;
@@ -37,7 +38,8 @@ public class DatabaseManager {
     private PreparedStatement addNewDelivery, addNewDeliveryProduct;
     private PreparedStatement addNewSale, addNewSaleProduct, addNewSaleProductProblem;
     private PreparedStatement addNewReturn;
-    private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname;
+    private PreparedStatement updateComplaint;
+    private PreparedStatement checkLoginExist, checkPasswordCorrect, getFirstName, getSurname, getIdEmployee;
     private PreparedStatement getTableOfProducts;
     private PreparedStatement registerNewEmployee;
 
@@ -56,6 +58,7 @@ public class DatabaseManager {
             getProductsFromCategoryName.close();
             getProductsFromSale.close();
             getProductsWithProblems.close();
+            getComplaints.close();
             getAllCategories.close();
             getAllSales.close();
             getAllSuppliers.close();
@@ -66,10 +69,12 @@ public class DatabaseManager {
             addNewSaleProduct.close();
             addNewSaleProductProblem.close();
             addNewReturn.close();
+            updateComplaint.close();
             checkLoginExist.close();
             checkPasswordCorrect.close();
             getFirstName.close();
             getSurname.close();
+            getIdEmployee.close();
             getTableOfProducts.close();
             registerNewEmployee.close();
             conn.close();
@@ -83,12 +88,14 @@ public class DatabaseManager {
             getProductsIdFromCategoryId = getProductsNameFromCategoryId = getProductsFromCategoryName = null;
             getProductsFromSale = null;
             getProductsWithProblems = null;
+            getComplaints = null;
             getAllCategories = getAllSales = getAllSuppliers = null;
             getProductPropertiesFromId = null;
             addNewDelivery = addNewDeliveryProduct = null;
             addNewSale = addNewSaleProduct = addNewSaleProductProblem = null;
             addNewReturn = null;
-            checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = null;
+            updateComplaint = null;
+            checkLoginExist = checkPasswordCorrect = getFirstName = getSurname = getIdEmployee = null;
             getTableOfProducts = null;
             registerNewEmployee = null;
         }
@@ -118,6 +125,8 @@ public class DatabaseManager {
 
             getProductsWithProblems = conn.prepareStatement("SELECT * FROM repr_of_products_problems(?)");
 
+            getComplaints = conn.prepareStatement("SELECT id_complaint, id_product, (SELECT name FROM products WHERE id = id_product), complaint_date, quantity, complaint_description FROM complaint WHERE id_complaint NOT IN (SELECT id_complaint FROM complaint WHERE complaint_accepted = TRUE OR complaint_accepted = FALSE)");
+
             getAllCategories = conn.prepareStatement("SELECT * FROM CATEGORIES");
             getAllSales = conn.prepareStatement("SELECT * FROM SALES");
             getAllSuppliers = conn.prepareStatement("SELECT * FROM SUPPLIERS");
@@ -135,10 +144,13 @@ public class DatabaseManager {
 
             addNewReturn = conn.prepareStatement("INSERT INTO clients_return (id_sale, id_product, quantity, return_date) VALUES (?, ?, ?, ?)");
 
+            updateComplaint = conn.prepareStatement("UPDATE complaint SET complaint_accepted = ?, id_employee = ?, result_date = ? WHERE id_complaint = ?");
+
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
             checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
             getFirstName = conn.prepareStatement("SELECT first_name FROM employees WHERE login = ?");
             getSurname = conn.prepareStatement("SELECT last_name FROM employees WHERE login = ?");
+            getIdEmployee = conn.prepareStatement("SELECT id_employee FROM employees WHERE login = ?");
 
             getTableOfProducts = conn.prepareStatement("SELECT * FROM nice_repr_of_products()");
 
@@ -292,6 +304,18 @@ public class DatabaseManager {
         }
     }
 
+    private ArrayList<ComplaintRepr> queryComplaintList(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            ArrayList<ComplaintRepr> returnList = new ArrayList<>();
+            while(rs.next()) {
+                returnList.add(new ComplaintRepr(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4), rs.getDouble(5), rs.getString(6)));
+            }
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            return returnList;
+        }
+    }
+
     public ResultSet queryAnything(String statement) throws SQLException {
         PreparedStatement st = conn.prepareStatement(statement);
         try (ResultSet rs = st.executeQuery()) {
@@ -379,6 +403,18 @@ public class DatabaseManager {
         }
     }
 
+    public void updateComplaint(boolean accepted, int id_employee, int id_complaint) {
+        try {
+            updateComplaint.setBoolean(1, accepted);
+            updateComplaint.setInt(2, id_employee);
+            updateComplaint.setTimestamp(3, new java.sql.Timestamp(System.currentTimeMillis()));
+            updateComplaint.setInt(4, id_complaint);
+            update(updateComplaint);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ArrayList<String> getProductPropertiesFromId(int id) {
         try {
             getProductPropertiesFromId.setInt(1, id);
@@ -425,6 +461,15 @@ public class DatabaseManager {
         }
     }
 
+    public Integer getIdEmployee(String name) {
+        try {
+            getIdEmployee.setString(1, name);
+            return queryInteger(getIdEmployee);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public ArrayList<ProductRepr> getTableOfProducts() {
         try {
             return queryProductList(getTableOfProducts);
@@ -461,6 +506,14 @@ public class DatabaseManager {
     public ArrayList<SupplierRecord> getAllSuppliers() {
         try {
             return querySupplierList(getAllSuppliers);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<ComplaintRepr> getComplaints() {
+        try {
+            return queryComplaintList(getComplaints);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

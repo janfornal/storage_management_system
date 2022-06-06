@@ -4,12 +4,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="leftAnchorPaneMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.deliveryView.LeftAnchorPaneMenu">
+<AnchorPane fx:id="leftAnchorPaneMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="150.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StorageManagementSystem.menuView.LeftAnchorPaneMenu">
    <children>
       <Button fx:id="deliveryButton" layoutX="20.0" layoutY="25.0" mnemonicParsing="false" onAction="#provideDeliveryWindow" prefHeight="26.0" prefWidth="110.0" text="New delivery" />
       <Button fx:id="saleButton" layoutX="20.0" layoutY="65.0" mnemonicParsing="false" onAction="#provideSaleWindow" prefHeight="26.0" prefWidth="110.0" text="Sale" />
       <Button fx:id="returnButton" layoutX="20.0" layoutY="105.0" mnemonicParsing="false" onAction="#provideReturnWindow" prefHeight="26.0" prefWidth="110.0" text="Add return" />
       <Label fx:id="nameLabel" layoutX="20.0" layoutY="400.0" prefHeight="26.0" prefWidth="110.0" text="Name:" />
       <Label fx:id="surnameLabel" layoutX="20.0" layoutY="440.0" prefHeight="26.0" prefWidth="110.0" text="Surname:" />
+      <Button fx:id="complaintsButton" layoutX="20.0" layoutY="145.0" mnemonicParsing="false" onAction="#provideComplaintWindow" prefHeight="26.0" prefWidth="110.0" text="Complaints" />
    </children>
 </AnchorPane>

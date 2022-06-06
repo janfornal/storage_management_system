@@ -1,7 +1,6 @@
 package StorageManagementSystem.menuView;
 
 import StorageManagementSystem.fxmlAssistants.GeneralWindow;
-import StorageManagementSystem.deliveryView.LeftAnchorPaneMenu;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
