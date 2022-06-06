@@ -266,4 +266,27 @@ EXECUTE PROCEDURE before_update_or_insert_on_complaint();
 
 ---------------------------------------------------------------
 
+CREATE FUNCTION hash_password()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.password := encode(sha512(NEW.password::BYTEA), 'base64');
+    RETURN NEW;
+END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE TRIGGER hash_password1
+    BEFORE INSERT
+    ON EMPLOYEES
+    FOR EACH ROW
+EXECUTE PROCEDURE hash_password();
+
+CREATE TRIGGER hash_password2
+    BEFORE INSERT
+    ON CLIENTS
+    FOR EACH ROW
+EXECUTE PROCEDURE hash_password();
+
+---------------------------------------------------------------
+
 COMMIT;

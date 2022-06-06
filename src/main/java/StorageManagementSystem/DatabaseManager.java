@@ -4,6 +4,7 @@ import StorageManagementSystem.records.*;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /**
@@ -161,7 +162,7 @@ public class DatabaseManager {
             updateComplaint = conn.prepareStatement("UPDATE complaint SET complaint_accepted = ?, id_employee = ?, result_date = ? WHERE id_complaint = ?");
 
             checkLoginExist = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ?),'FALSE')");
-            checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = ?),'FALSE')");
+            checkPasswordCorrect = conn.prepareStatement("SELECT * FROM COALESCE((SELECT 'TRUE' FROM employees WHERE login = ? AND password = encode(sha512(?::BYTEA), 'base64')),'FALSE')");
             getFirstName = conn.prepareStatement("SELECT first_name FROM employees WHERE login = ?");
             getSurname = conn.prepareStatement("SELECT last_name FROM employees WHERE login = ?");
             getIdEmployee = conn.prepareStatement("SELECT id_employee FROM employees WHERE login = ?");
@@ -182,6 +183,11 @@ public class DatabaseManager {
     }
 
     private void initSchema() throws SQLException {
+    }
+
+    private String repr(Object o) {
+        String ret = Objects.toString(o);
+        return ret.length() > 200 ? ret.substring(0, 100) + "..." : ret;
     }
 
     private int update(PreparedStatement st) throws SQLException {
@@ -219,7 +225,7 @@ public class DatabaseManager {
         try (ResultSet rs = st.executeQuery()) {
             Service.DB_QUERY_CALL_STREAM.println(st);
             String res = rs.next() ? rs.getString(1) : null;
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + res);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(res));
             return res;
         }
     }
@@ -247,7 +253,7 @@ public class DatabaseManager {
                 }
                 returnList.add(returnBuilder.toString());
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -259,7 +265,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new ProductRepr(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDouble(5), rs.getDouble(6)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -271,7 +277,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new CategoryRecord(rs.getInt(1), rs.getString(2)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -283,7 +289,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new SaleRepr(rs.getInt(1), rs.getTimestamp(2)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -295,7 +301,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new SupplierRecord(rs.getInt(1), rs.getString(2)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -307,7 +313,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new ProductWithProblemRepr(rs.getInt(1), rs.getString(2), rs.getDouble(3), rs.getDouble(4)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -319,7 +325,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new ReturnProductRepr(rs.getInt(1), rs.getString(2), rs.getDouble(3)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -331,7 +337,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new ComplaintRepr(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getTimestamp(4), rs.getDouble(5), rs.getString(6)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }
@@ -343,7 +349,7 @@ public class DatabaseManager {
             while(rs.next()) {
                 returnList.add(new PersonRecord(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
             }
-            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
         }
     }

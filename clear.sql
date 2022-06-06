@@ -34,9 +34,11 @@ DROP FUNCTION IF EXISTS update_increase_store_status            CASCADE;
 DROP FUNCTION IF EXISTS insert_id_products_to_store_status      CASCADE;
 DROP FUNCTION IF EXISTS before_insert_on_clients_return         CASCADE;
 DROP FUNCTION IF EXISTS before_update_or_insert_on_complaint    CASCADE;
+DROP FUNCTION IF EXISTS hash_password                           CASCADE;
 
 
 DROP FUNCTION IF EXISTS nice_repr_of_products                   CASCADE;
+DROP FUNCTION IF EXISTS repr_of_products_problems               CASCADE;
 DROP FUNCTION IF EXISTS get_gross_price                         CASCADE;
 DROP FUNCTION IF EXISTS get_current_vat                         CASCADE;
 DROP FUNCTION IF EXISTS get_current_price                       CASCADE;
