@@ -13,6 +13,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 
+import java.sql.Date;
+import java.util.Calendar;
+
 public class ReturnMenu {
 
     @FXML
@@ -116,6 +119,32 @@ public class ReturnMenu {
     }
 
     public void chosenComplaintButton(ActionEvent actionEvent) {
+        if(GUIPresenter.functionalityController instanceof ReturnWindow windowController) {
+            if(descriptionTextArea.getText() == null || selectAmountField.getText() == null || windowController.selectedItem() == null) {
+                Platform.runLater(
+                        () -> new Alert(Alert.AlertType.ERROR, "Please provide all of data").showAndWait()
+                );
+            }
+            else {
+                Double quantity;
+                try
+                {
+                    quantity = Double.parseDouble(selectAmountField.getText());
+                }
+                catch(NumberFormatException e)
+                {
+                    Platform.runLater(
+                            () -> new Alert(Alert.AlertType.ERROR, "You provided wrong data in amount field").showAndWait()
+                    );
+                    return;
+                }
+                GUIPresenter.databaseManager.addComplaint(windowController.selectedItem().id(), saleComboBox.getValue().id_sale() , quantity.intValue(), new Date(System.currentTimeMillis()),descriptionTextArea.getText());
+                GUIPresenter.standardCloseFunctionalityStage();
+            }
+        }
+        else {
+            throw new RuntimeException("application recognizes wrong functionality window");
+        }
     }
 }
 
