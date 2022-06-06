@@ -29,5 +29,17 @@ public enum FunctionalityValues implements FXMLManager {
         public void setLocation(FXMLLoader loader) {
             loader.setLocation(GUIPresenter.class.getResource("/returnWindow.fxml"));
         }
+    },
+    CUSTOMER(){
+        @Override
+        public void setLocation(FXMLLoader loader){
+            loader.setLocation(GUIPresenter.class.getResource("/customerMenu.fxml"));
+        }
+    },
+    EMPLOYEE(){
+        @Override
+        public void setLocation(FXMLLoader loader){
+            loader.setLocation((GUIPresenter.class.getResource("/employeesMenu.fxml")));
+        }
     }
 }

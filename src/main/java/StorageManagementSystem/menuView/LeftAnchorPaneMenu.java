@@ -2,6 +2,7 @@ package StorageManagementSystem.menuView;
 
 import StorageManagementSystem.fxmlAssistants.FunctionalityValues;
 import StorageManagementSystem.GUIPresenter;
+import StorageManagementSystem.fxmlAssistants.FunctionalityWindow;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -43,6 +44,14 @@ public class LeftAnchorPaneMenu {
 
     public void provideComplaintWindow(javafx.event.ActionEvent actionEvent) {
         GUIPresenter.enterFunctionalityWindow(FunctionalityValues.COMPLAINT);
+    }
+
+    public void provideCustomersWindow(javafx.event.ActionEvent actionEvent){
+        GUIPresenter.enterFunctionalityWindow(FunctionalityValues.CUSTOMER);
+    }
+
+    public void provideEmployeesWindow(javafx.event.ActionEvent actionEvent){
+        GUIPresenter.enterFunctionalityWindow(FunctionalityValues.EMPLOYEE);
     }
 }
 

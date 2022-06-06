@@ -12,5 +12,7 @@
       <Label fx:id="nameLabel" layoutX="20.0" layoutY="400.0" prefHeight="26.0" prefWidth="110.0" text="Name:" />
       <Label fx:id="surnameLabel" layoutX="20.0" layoutY="440.0" prefHeight="26.0" prefWidth="110.0" text="Surname:" />
       <Button fx:id="complaintsButton" layoutX="20.0" layoutY="145.0" mnemonicParsing="false" onAction="#provideComplaintWindow" prefHeight="26.0" prefWidth="110.0" text="Complaints" />
+      <Button fx:id="customersButton" layoutX="20.0" layoutY="184.0" mnemonicParsing="false" onAction="#provideCustomersWindow" prefHeight="26.0" prefWidth="110.0" text="Customers" />
+      <Button fx:id="employeesButton" layoutX="20.0" layoutY="224.0" mnemonicParsing="false" onAction="#provideEmployeesWindow" prefHeight="26.0" prefWidth="110.0" text="Employees" />
    </children>
 </AnchorPane>

@@ -45,6 +45,10 @@ public class DatabaseManager {
 
     private PreparedStatement addNewComplaint, solveComplaint;
 
+    private PreparedStatement getCustomers, getAllDataCustomers;
+
+    private PreparedStatement getEmployees;
+
     public void close() {
         if (conn == null)
             return;
@@ -81,6 +85,9 @@ public class DatabaseManager {
             registerNewEmployee.close();
             addNewComplaint.close();
             solveComplaint.close();
+            getCustomers.close();
+            getAllDataCustomers.close();
+            getEmployees.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -103,6 +110,8 @@ public class DatabaseManager {
             getTableOfProducts = null;
             registerNewEmployee = null;
             addNewComplaint = solveComplaint = null;
+            getCustomers = getAllDataCustomers = null;
+            getEmployees = null;
         }
     }
 
@@ -161,7 +170,12 @@ public class DatabaseManager {
 
             registerNewEmployee = conn.prepareStatement("INSERT INTO employees (\"login\", \"password\", first_name, last_name) VALUES (?, ?, ?, ?)");
 
-            addNewComplaint = conn.prepareStatement("INSERT INTO complaint (id_product, id_sale, quantity, complaint_date, complaint_description)VALUES(?, ?, ?, ?, ?, null, null, null)");
+            addNewComplaint = conn.prepareStatement("INSERT INTO complaint (id_product, id_sale, quantity, complaint_date, complaint_description )VALUES(?, ?, ?, ?, ?)");
+
+            getCustomers = conn.prepareStatement("SELECT id_client,login,first_name,last_name FROM clients");
+            getEmployees = conn.prepareStatement("SELECT id_employee,login,first_name,last_name FROM employees");
+
+            getAllDataCustomers = conn.prepareStatement("SELECT * FROM clients where id_client = ?");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -322,6 +336,19 @@ public class DatabaseManager {
         }
     }
 
+    private ArrayList<PersonRecord> queryPersonList(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            ArrayList<PersonRecord> returnList = new ArrayList<>();
+            while(rs.next()) {
+                returnList.add(new PersonRecord(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)));
+            }
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + returnList);
+            return returnList;
+        }
+    }
+
+
     public ResultSet queryAnything(String statement) throws SQLException {
         PreparedStatement st = conn.prepareStatement(statement);
         try (ResultSet rs = st.executeQuery()) {
@@ -430,6 +457,16 @@ public class DatabaseManager {
         }
     }
 
+    public ArrayList<String> getAllDataCustomers(int id) {
+        try {
+            getAllDataCustomers.setInt(1,id);
+            return queryStringList(getAllDataCustomers);
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
     public Boolean checkLoginExist(String login) {
         try {
             checkLoginExist.setString(1, login);
@@ -525,6 +562,24 @@ public class DatabaseManager {
         }
     }
 
+    public ArrayList<PersonRecord> getCustomers(){
+        try{
+            return queryPersonList(getCustomers);
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ArrayList<PersonRecord> getEmployees(){
+        try{
+            return queryPersonList(getEmployees);
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
     public ArrayList<ProductWithProblemRepr> getProductsWithProblems(int i) {
         try {
             getProductsWithProblems.setInt(1, i);
@@ -591,17 +646,17 @@ public class DatabaseManager {
         }
     }
 
-    public void addComplaint(int id_product, int id_sale, int quantity, Date data, String description){
+    public void addComplaint(int id_product, int id_sale, int quantity, String description){
         try{
             addNewComplaint.setInt(1,id_product);
             addNewComplaint.setInt(2,id_sale);
             addNewComplaint.setInt(3,quantity);
-            addNewComplaint.setDate(4,data);
+            addNewComplaint.setTimestamp(4,new Timestamp(System.currentTimeMillis()));
             addNewComplaint.setString(5,description);
             update(addNewComplaint);
         }
         catch (SQLException e){
-            throw new IllegalStateException();
+            throw new RuntimeException(e);
         }
     }
 }
