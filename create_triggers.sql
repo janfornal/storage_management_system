@@ -231,8 +231,7 @@ BEGIN
         RETURN OLD;
     END IF;
 
-    IF NEW.complaint_description IS NULL AND
-       NEW.result_date IS NULL AND
+    IF NEW.result_date IS NULL AND
        NEW.complaint_accepted IS NULL AND
        NEW.id_employee IS NULL THEN
         RETURN NEW;
