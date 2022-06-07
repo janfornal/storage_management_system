@@ -143,7 +143,7 @@ public class DatabaseManager {
             getComplaints = conn.prepareStatement("SELECT id_complaint, id_product, (SELECT name FROM products WHERE id = id_product), complaint_date, quantity, complaint_description FROM complaint WHERE id_complaint NOT IN (SELECT id_complaint FROM complaint WHERE complaint_accepted = TRUE OR complaint_accepted = FALSE)");
 
             getAllCategories = conn.prepareStatement("SELECT * FROM CATEGORIES");
-            getAllSales = conn.prepareStatement("SELECT * FROM SALES");
+            getAllSales = conn.prepareStatement("SELECT * FROM SALES ORDER BY id_sale DESC ");
             getAllSuppliers = conn.prepareStatement("SELECT * FROM SUPPLIERS");
 
             getProductPropertiesFromId = conn.prepareStatement("SELECT " +
