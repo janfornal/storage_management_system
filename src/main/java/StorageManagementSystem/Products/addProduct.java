@@ -146,5 +146,8 @@ public class addProduct implements FunctionalityWindow {
             );
             return;
         }
+        catch (Exception e){
+            GUIPresenter.standardCloseFunctionalityStage();
+        }
     }
 }
