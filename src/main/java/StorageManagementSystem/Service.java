@@ -14,8 +14,8 @@ public interface Service {
     });
 
     PrintStream NULL_STREAM = new PrintStream(OutputStream.nullOutputStream());
-    PrintStream ERROR_STREAM = System.err;
-    PrintStream INFO_STREAM = System.out;
+    PrintStream ERROR_STREAM = NULL_STREAM;
+    PrintStream INFO_STREAM = NULL_STREAM;
 
     PrintStream INC_MESSAGE = INFO_STREAM; // report messages that you received
     PrintStream SND_MESSAGE = INFO_STREAM; // report messages that you tried to send

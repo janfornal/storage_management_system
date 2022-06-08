@@ -153,6 +153,15 @@ def gen_upper():
             pass
 
     # CLIENTS_RETURN, COMPLAINT, PRODUCTS_PROBLEMS
+    tmp = list(sample(PRODUCTS_SOLD, 15))
+    for x in tmp[:5]:
+        CLIENTS_RETURN.append((x[0], x[1], max(1, x[2] - 2), datetime(2021, 1, min(x[2], 28))))
+    for x in tmp[5:10]:
+        COMPLAINT.append((x[0], x[1], max(1, x[2] - 2), datetime(2021, 1, min(x[2], 28)), str(x[0])+" is broken",
+                          None, None, None))
+    for x in tmp[10:]:
+        COMPLAINT.append((x[0], x[1], max(1, x[2] - 2), datetime(2021, 1, min(x[2], 28)), str(x[0])+" is broken",
+                          datetime(2021, 2, min(x[2], 28)), x[0] & 1 == 0, 1+min(x[2], 5)))
 
     print('BEGIN;')
 
@@ -167,7 +176,7 @@ def gen_upper():
     print_tab(PRODUCTS_SOLD, 'PRODUCTS_SOLD (id_sale, id_product, quantity)')
 
     print_tab(CLIENTS_RETURN, 'CLIENTS_RETURN (id_sale, id_product, quantity, return_date)')
-    print_tab(COMPLAINT, 'COMPLAINT (id_product, id_sale, quantity, complaint_date, complaint_description, result_date, complaint_accepted, id_employee)')
+    print_tab(COMPLAINT, 'COMPLAINT (id_sale, id_product, quantity, complaint_date, complaint_description, result_date, complaint_accepted, id_employee)')
     print_tab(PRODUCTS_PROBLEMS, 'PRODUCTS_PROBLEMS (id_product, quantity, exhibition, returned, problem_description, discount)')
     print_tab(INTERNET_SALE, 'INTERNET_SALE (id_sale, date_delivery, method_delivery, id_address)')
 
