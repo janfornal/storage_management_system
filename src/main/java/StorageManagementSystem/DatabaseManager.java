@@ -31,6 +31,7 @@ public class DatabaseManager {
     private PreparedStatement getProductsIdFromCategoryId, getProductsNameFromCategoryId, getProductsFromCategoryName;
     private PreparedStatement getProductsFromSale;
     private PreparedStatement getProductsWithProblems;
+    private PreparedStatement addNewProduct;
     private PreparedStatement getComplaints;
     private PreparedStatement getAllCategories;
     private PreparedStatement getAllSales;
@@ -48,6 +49,7 @@ public class DatabaseManager {
 
     private PreparedStatement getCustomers, getAllDataCustomers;
 
+    private PreparedStatement getBrands;
     private PreparedStatement getEmployees;
 
     public void close() {
@@ -89,6 +91,8 @@ public class DatabaseManager {
             getCustomers.close();
             getAllDataCustomers.close();
             getEmployees.close();
+            getBrands.close();
+            addNewProduct.close();
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace(Service.ERROR_STREAM);
@@ -113,6 +117,8 @@ public class DatabaseManager {
             addNewComplaint = solveComplaint = null;
             getCustomers = getAllDataCustomers = null;
             getEmployees = null;
+            getBrands = null;
+            addNewProduct = null;
         }
     }
 
@@ -132,6 +138,7 @@ public class DatabaseManager {
             getProductNameFromId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id = ?");
             getIdFromProductName = conn.prepareStatement("SELECT id FROM PRODUCTS WHERE name = ?");
 
+
             getProductsIdFromCategoryId = conn.prepareStatement("SELECT id FROM PRODUCTS WHERE id_category = ?");
             getProductsNameFromCategoryId = conn.prepareStatement("SELECT name FROM PRODUCTS WHERE id_category = ?");
             getProductsFromCategoryName = conn.prepareStatement("SELECT * FROM nice_repr_of_products() WHERE category = ?");
@@ -143,6 +150,7 @@ public class DatabaseManager {
             getComplaints = conn.prepareStatement("SELECT id_complaint, id_product, (SELECT name FROM products WHERE id = id_product), complaint_date, quantity, complaint_description FROM complaint WHERE id_complaint NOT IN (SELECT id_complaint FROM complaint WHERE complaint_accepted = TRUE OR complaint_accepted = FALSE)");
 
             getAllCategories = conn.prepareStatement("SELECT * FROM CATEGORIES");
+            getBrands = conn.prepareStatement("SELECT * FROM brand");
             getAllSales = conn.prepareStatement("SELECT * FROM SALES ORDER BY id_sale DESC ");
             getAllSuppliers = conn.prepareStatement("SELECT * FROM SUPPLIERS");
 
@@ -152,7 +160,7 @@ public class DatabaseManager {
 
             addNewDelivery = conn.prepareStatement("INSERT INTO deliveries (id_supplier, date_delivery) VALUES (?, ?) RETURNING id_delivery");
             addNewDeliveryProduct = conn.prepareStatement("INSERT INTO products_deliveries (id_delivery, id_product, quantity) VALUES (?, ?, ?)");
-
+            addNewProduct = conn.prepareStatement("INSERT INTO products (id_category, name, id_brand) VALUES (?, ?, ?)");
             addNewSale = conn.prepareStatement("INSERT INTO sales (sales_date) VALUES (?) RETURNING id_sale");
             addNewSaleProduct = conn.prepareStatement("INSERT INTO products_sold (id_sale, id_product, quantity) VALUES (?, ?, ?)");
             addNewSaleProductProblem = conn.prepareStatement("INSERT INTO products_problems_sold (id_sale, id_product_with_problem, quantity) VALUES (?, ?, ?)");
@@ -276,6 +284,18 @@ public class DatabaseManager {
             ArrayList<CategoryRecord> returnList = new ArrayList<>();
             while(rs.next()) {
                 returnList.add(new CategoryRecord(rs.getInt(1), rs.getString(2)));
+            }
+            Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
+            return returnList;
+        }
+    }
+
+    private ArrayList<BrandRecord> queryBrandList(PreparedStatement st) throws SQLException {
+        try (ResultSet rs = st.executeQuery()) {
+            Service.DB_QUERY_CALL_STREAM.println(st);
+            ArrayList<BrandRecord> returnList = new ArrayList<>();
+            while(rs.next()) {
+                returnList.add(new BrandRecord(rs.getInt(1), rs.getString(2)));
             }
             Service.DB_QUERY_RESULT_STREAM.println(st + "\tresult: " + repr(returnList));
             return returnList;
@@ -544,6 +564,13 @@ public class DatabaseManager {
         }
     }
 
+    public ArrayList<BrandRecord> getAllBrands(){
+        try{
+            return queryBrandList(getBrands);
+        }catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
     public ArrayList<SaleRepr> getAllSales() {
         try {
             return querySaleList(getAllSales);
@@ -660,6 +687,18 @@ public class DatabaseManager {
             addNewComplaint.setTimestamp(4,new Timestamp(System.currentTimeMillis()));
             addNewComplaint.setString(5,description);
             update(addNewComplaint);
+        }
+        catch (SQLException e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void addNewProduct(int id_category, String name, int id_brand){
+        try{
+            addNewProduct.setInt(1,id_category);
+            addNewProduct.setString(2,name);
+            addNewProduct.setInt(3,id_brand);
+            update(addNewProduct);
         }
         catch (SQLException e){
             throw new RuntimeException(e);
